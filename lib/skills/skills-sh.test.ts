@@ -1,9 +1,15 @@
 import { describe, it, expect, vi, afterEach } from "vitest"
-import { fetchCuratedSkillsSh, fetchSearchSkillsSh } from "@/app/actions/skills"
+import {
+  fetchCuratedSkillsSh,
+  fetchSearchSkillsSh,
+} from "@/lib/skills/skills-sh"
 
-// Server actions ("use server") can't be imported into vitest without the
-// Next transform mangling them, so the fetch logic lives in pure helpers and
-// the "use server" wrappers just call them. This file tests the helpers.
+// These helpers live OUTSIDE any "use server" file on purpose: in a "use
+// server" module, every export becomes a client-callable server action, which
+// would let the client call them directly and skip the requireSessionUser()
+// gate that the action wrappers enforce. Here they're plain server-only
+// helpers, callable from the authenticated server actions but not from the
+// client.
 
 const ok = (body: unknown): Response =>
   new Response(JSON.stringify(body), {
