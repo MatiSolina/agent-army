@@ -57,6 +57,8 @@ pnpm build
 | `lib/vercel/client.ts` | Vercel REST: deploy + project/env management. |
 | `lib/eve/env-spec.ts` | Which env keys each agent needs. |
 
+New here? **[`CLAUDE.md`](./CLAUDE.md)** is the full onboarding + architecture guide — setup, where to get every credential, and how deploys work.
+
 ## Contributing
 
 See [CONTRIBUTING.md](./CONTRIBUTING.md). Security issues: [SECURITY.md](./SECURITY.md).
