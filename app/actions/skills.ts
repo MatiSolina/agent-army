@@ -118,32 +118,51 @@ type CuratedResponse = {
   data?: Array<{ skills?: CuratedOrSearchResponse["data"] }>
 }
 
+// Pure fetch helpers (no "use server"), so they're unit-testable: the fetch
+// logic is extracted from the server actions and degrades to [] on any failure
+// (401, 5xx, network). A server action that throws turns into a 500 and breaks
+// the rendering Server Component (the Capabilities tab goes blank in prod);
+// returning [] keeps the action — and the tab — alive when skills.sh is down.
+export async function fetchCuratedSkillsSh(): Promise<SkillShResult[]> {
+  try {
+    const res = await fetch(`${SKILLS_SH_BASE}/skills/curated`, {
+      headers: authHeaders(),
+      cache: "no-store",
+    })
+    if (!res.ok) return []
+    const json = (await res.json()) as CuratedResponse
+    const flat = (json.data ?? []).flatMap((group) => group.skills ?? [])
+    return normalizeResults({ data: flat })
+  } catch {
+    return []
+  }
+}
+
+export async function fetchSearchSkillsSh(query: string): Promise<SkillShResult[]> {
+  const q = query.trim().slice(0, MAX_QUERY_CHARS)
+  if (!q) return []
+  try {
+    const res = await fetch(
+      `${SKILLS_SH_BASE}/skills/search?q=${encodeURIComponent(q)}&limit=20`,
+      { headers: authHeaders(), cache: "no-store" },
+    )
+    if (!res.ok) return []
+    return normalizeResults((await res.json()) as CuratedOrSearchResponse)
+  } catch {
+    return []
+  }
+}
+
 export async function getCuratedSkillsSh(): Promise<SkillShResult[]> {
   await requireSessionUser()
-  const res = await fetch(`${SKILLS_SH_BASE}/skills/curated`, {
-    headers: authHeaders(),
-    cache: "no-store",
-  })
-  if (!res.ok) {
-    throw new Error(`skills.sh responded ${res.status}`)
-  }
-  const json = (await res.json()) as CuratedResponse
-  const flat = (json.data ?? []).flatMap((group) => group.skills ?? [])
-  return normalizeResults({ data: flat })
+  return fetchCuratedSkillsSh()
 }
 
 export async function searchSkillsSh(query: string): Promise<SkillShResult[]> {
   await requireSessionUser()
   const q = query.trim().slice(0, MAX_QUERY_CHARS)
   if (!q) return getCuratedSkillsSh()
-  const res = await fetch(
-    `${SKILLS_SH_BASE}/skills/search?q=${encodeURIComponent(q)}&limit=20`,
-    { headers: authHeaders(), cache: "no-store" },
-  )
-  if (!res.ok) {
-    throw new Error(`skills.sh responded ${res.status}`)
-  }
-  return normalizeResults((await res.json()) as CuratedOrSearchResponse)
+  return fetchSearchSkillsSh(query)
 }
 
 /**
