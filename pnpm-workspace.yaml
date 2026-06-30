@@ -1,0 +1,15 @@
+packages:
+  - "."
+
+allowBuilds:
+  '@swc/core': true
+  cbor-extract: true
+  esbuild: true
+  msw: true
+  sharp: true
+  unrs-resolver: true
+
+overrides:
+  hono: 4.12.25
+  postcss: 8.5.15
+  undici: 7.28.0

@@ -1,0 +1,44 @@
+# Workflow SDK generated files
+app/.well-known/workflow/
+
+# v0 sandbox internal files
+__v0_runtime_loader.js
+__v0_devtools.tsx
+__v0_jsx-dev-runtime.ts
+.snowflake/
+.v0-trash/
+.vercel/
+
+# Environment variables
+.env*.local
+
+# Common ignores
+node_modules
+.next/
+.next-fleet-mcp-e2e-*/
+.swc/
+.DS_Store
+.vercel
+.env*
+!.env.example
+
+# TypeScript incremental build cache
+tsconfig.tsbuildinfo
+
+# SDD process scratch
+.superpowers/
+
+# Local security scanner scratch
+.deepsec/
+
+# Per-agent Eve deployment working directories
+.eve-deploy/
+
+# Supabase CA scratch (CA inlined in lib/db/supabase-ca.ts)
+certs/
+
+# Tooling scratch
+.worktrees/
+.playwright-mcp/
+.xmcp/
+xmcp-env.d.ts
