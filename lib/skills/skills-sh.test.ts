@@ -2,6 +2,7 @@ import { describe, it, expect, vi, afterEach } from "vitest"
 import {
   fetchCuratedSkillsSh,
   fetchSearchSkillsSh,
+  fetchSkillDetailSh,
 } from "@/lib/skills/skills-sh"
 
 // These helpers live OUTSIDE any "use server" file on purpose: in a "use
@@ -80,5 +81,81 @@ describe("fetchSearchSkillsSh", () => {
     const out = await fetchSearchSkillsSh("   ")
     expect(out).toEqual([])
     expect(f).not.toHaveBeenCalled()
+  })
+})
+
+describe("fetchSkillDetailSh", () => {
+  afterEach(() => vi.restoreAllMocks())
+
+  it("returns null instead of throwing when skills.sh responds 401", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => new Response("nope", { status: 401 })),
+    )
+    const out = await fetchSkillDetailSh("anthropics/skills", "refund")
+    expect(out).toBeNull()
+  })
+
+  it("returns null instead of throwing when the network fails", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () => {
+        throw new Error("ECONNRESET")
+      }),
+    )
+    const out = await fetchSkillDetailSh("anthropics/skills", "refund")
+    expect(out).toBeNull()
+  })
+
+  it("returns null when the skill has no SKILL.md", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        ok({ files: [{ path: "README.md", contents: "# hi" }] }),
+      ),
+    )
+    const out = await fetchSkillDetailSh("anthropics/skills", "refund")
+    expect(out).toBeNull()
+  })
+
+  it("returns null when SKILL.md has no name frontmatter", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        ok({
+          files: [
+            {
+              path: "SKILL.md",
+              contents: "---\ndescription: no name here\n---\nbody",
+            },
+          ],
+        }),
+      ),
+    )
+    const out = await fetchSkillDetailSh("anthropics/skills", "refund")
+    expect(out).toBeNull()
+  })
+
+  it("returns a parsed AgentSkill when SKILL.md is valid", async () => {
+    vi.stubGlobal(
+      "fetch",
+      vi.fn(async () =>
+        ok({
+          files: [
+            {
+              path: "SKILL.md",
+              contents:
+                "---\nname: refund\ndescription: handles refunds\n---\n# Refund\nsteps here",
+            },
+          ],
+        }),
+      ),
+    )
+    const out = await fetchSkillDetailSh("anthropics/skills", "refund")
+    expect(out).toMatchObject({
+      name: "refund",
+      description: "handles refunds",
+    })
+    expect(out?.content).toContain("# Refund")
   })
 })

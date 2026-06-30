@@ -1,12 +1,13 @@
 "use server"
 
 import { unzipSync, strFromU8 } from "fflate"
-import { randomUUID } from "crypto"
 import type { AgentSkill } from "@/lib/db/schema"
 import { requireSessionUser } from "@/lib/session"
 import {
   fetchCuratedSkillsSh,
   fetchSearchSkillsSh,
+  fetchSkillDetailSh,
+  parseSkillMarkdown,
   type SkillShResult,
 } from "@/lib/skills/skills-sh"
 
@@ -21,70 +22,8 @@ import {
 
 export type { SkillShResult } from "@/lib/skills/skills-sh"
 
-const SKILLS_SH_BASE = "https://skills.sh/api/v1"
 const MAX_ZIP_BYTES = 5 * 1024 * 1024 // 5 MB is plenty for a SKILL.md bundle
-const MAX_CONTENT_CHARS = 200_000
 const MAX_QUERY_CHARS = 120
-const MAX_PATH_CHARS = 200
-
-type SkillDetailResponse = {
-  files?: Array<{ path?: string; contents?: string }>
-}
-
-function authHeaders(): HeadersInit {
-  const token = process.env.VERCEL_OIDC_TOKEN
-  return {
-    Accept: "application/json",
-    ...(token ? { Authorization: `Bearer ${token}` } : {}),
-  }
-}
-
-/**
- * Minimal `---\nkey: value\n---` frontmatter parser. Avoids a heavy YAML dep:
- * SKILL.md frontmatter we care about (name, description) is flat key/value, so
- * a line-based parser is enough. Returns the parsed keys plus the body that
- * follows the closing fence.
- */
-function parseFrontmatter(raw: string): {
-  data: Record<string, string>
-  body: string
-} {
-  const normalized = raw.replace(/\r\n/g, "\n")
-  const match = /^---\n([\s\S]*?)\n---\n?/.exec(normalized)
-  if (!match) return { data: {}, body: normalized.trim() }
-
-  const data: Record<string, string> = {}
-  for (const line of match[1].split("\n")) {
-    const idx = line.indexOf(":")
-    if (idx === -1) continue
-    const key = line.slice(0, idx).trim()
-    if (!key) continue
-    let val = line.slice(idx + 1).trim()
-    // Strip surrounding quotes if present.
-    if (
-      (val.startsWith('"') && val.endsWith('"')) ||
-      (val.startsWith("'") && val.endsWith("'"))
-    ) {
-      val = val.slice(1, -1)
-    }
-    data[key] = val
-  }
-  const body = normalized.slice(match[0].length).trim()
-  return { data, body }
-}
-
-/** Build an AgentSkill from a SKILL.md file's raw contents. */
-function skillFromMarkdown(raw: string): AgentSkill | null {
-  const { data, body } = parseFrontmatter(raw)
-  const name = (data.name ?? "").trim()
-  if (!name) return null
-  return {
-    id: randomUUID(),
-    name,
-    description: (data.description ?? "").trim(),
-    content: body.slice(0, MAX_CONTENT_CHARS),
-  }
-}
 
 export async function getCuratedSkillsSh(): Promise<SkillShResult[]> {
   await requireSessionUser()
@@ -99,72 +38,38 @@ export async function searchSkillsSh(query: string): Promise<SkillShResult[]> {
 }
 
 /**
- * Fetch a skill's detail, locate its SKILL.md, parse it and return an
- * AgentSkill ready to merge into local state. Does NOT persist anything.
+ * Import a skill from skills.sh. Returns the parsed skill, or null when the
+ * fetch fails, the skill is missing a SKILL.md, or the SKILL.md has no `name`.
+ * Returns null (never throws) so a down/unreachable skills.sh surfaces as a
+ * tame "could not import" toast instead of a 500 / 'Server Components render'.
  */
 export async function importSkillFromSh(
   source: string,
   slug: string,
-): Promise<AgentSkill> {
+): Promise<AgentSkill | null> {
   await requireSessionUser()
-  const safeSource = source.trim().slice(0, MAX_PATH_CHARS)
-  const safeSlug = slug.trim().slice(0, MAX_PATH_CHARS)
-  if (!safeSource || !safeSlug) {
-    throw new Error("Missing skill source or slug")
-  }
-  // `source` is a multi-segment path (e.g. "anthropics/skills"); encode each
-  // segment but keep the slashes so the API routes it correctly.
-  const sourcePath = safeSource
-    .split("/")
-    .map(encodeURIComponent)
-    .join("/")
-  const res = await fetch(
-    `${SKILLS_SH_BASE}/skills/${sourcePath}/${encodeURIComponent(safeSlug)}`,
-    { headers: authHeaders(), cache: "no-store" },
-  )
-  if (!res.ok) {
-    throw new Error(`Could not fetch the skill (${res.status})`)
-  }
-  const json = (await res.json()) as SkillDetailResponse
-  const files = json.files ?? []
-  const skillFile = files.find((f) =>
-    (f.path ?? "").toLowerCase().endsWith("skill.md"),
-  )
-  if (!skillFile?.contents) {
-    throw new Error("The skill does not contain a SKILL.md file")
-  }
-  const skill = skillFromMarkdown(skillFile.contents)
-  if (!skill) {
-    throw new Error("SKILL.md is missing a 'name' field in its frontmatter")
-  }
-  return skill
+  return fetchSkillDetailSh(source, slug)
 }
 
 /**
  * Accept an uploaded .zip (as a FormData with a `file` field), unzip it in
  * memory, find SKILL.md (root or any subfolder), parse it and return an
- * AgentSkill. Does NOT persist anything.
+ * AgentSkill. Returns null (never throws) on any failure.
  */
 export async function importSkillFromZip(
   formData: FormData,
-): Promise<AgentSkill> {
+): Promise<AgentSkill | null> {
   await requireSessionUser()
   const file = formData.get("file")
-  if (!(file instanceof File)) {
-    throw new Error("No file was received")
-  }
-  if (file.size === 0) {
-    throw new Error("The file is empty")
-  }
-  if (file.size > MAX_ZIP_BYTES) {
-    throw new Error("The .zip exceeds the 5 MB limit")
-  }
+  if (!(file instanceof File)) return null
+  if (file.size === 0) return null
+  if (file.size > MAX_ZIP_BYTES) return null
 
   let entries: Record<string, Uint8Array>
   try {
     entries = unzipSync(new Uint8Array(await file.arrayBuffer()))
   } catch {
-    throw new Error("Could not decompress the .zip")
+    return null
   }
 
   // Prefer a root SKILL.md, fall back to the shallowest match in a subfolder.
@@ -173,13 +78,7 @@ export async function importSkillFromZip(
     .sort((a, b) => a.split("/").length - b.split("/").length)
 
   const skillPath = candidates[0]
-  if (!skillPath) {
-    throw new Error("The .zip does not contain a SKILL.md file")
-  }
+  if (!skillPath) return null
 
-  const skill = skillFromMarkdown(strFromU8(entries[skillPath]))
-  if (!skill) {
-    throw new Error("SKILL.md is missing a 'name' field in its frontmatter")
-  }
-  return skill
+  return parseSkillMarkdown(strFromU8(entries[skillPath]))
 }

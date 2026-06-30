@@ -204,11 +204,15 @@ function SkillsShDialog({
     setImportingId(r.id)
     try {
       const skill = await importSkillFromSh(r.source, r.slug)
+      if (!skill) {
+        toast.error("Could not import the skill. It may be missing a SKILL.md.")
+        return
+      }
       onImport(skill)
       toast.success(`Skill "${skill.name}" added`)
       onOpenChange(false)
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Could not import the skill")
+    } catch {
+      toast.error("Could not import the skill")
     } finally {
       setImportingId(null)
     }
@@ -318,10 +322,14 @@ export function SkillsEditor({
     startUpload(async () => {
       try {
         const skill = await importSkillFromZip(formData)
+        if (!skill) {
+          toast.error("Could not read the .zip. It may be missing a SKILL.md.")
+          return
+        }
         append(skill)
         toast.success(`Skill "${skill.name}" added`)
-      } catch (err) {
-        toast.error(err instanceof Error ? err.message : "Could not read the .zip")
+      } catch {
+        toast.error("Could not read the .zip")
       }
     })
   }
