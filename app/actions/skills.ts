@@ -112,7 +112,7 @@ function skillFromMarkdown(raw: string): AgentSkill | null {
   }
 }
 
-// /curated groups skills by owner with a nested `skills[]` array — a different
+// /curated groups skills by owner with a nested `skills[]` array, a different
 // shape from /search (flat). Flatten it before normalizing.
 type CuratedResponse = {
   data?: Array<{ skills?: CuratedOrSearchResponse["data"] }>

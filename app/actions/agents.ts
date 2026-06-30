@@ -179,7 +179,7 @@ export async function deleteAgent(id: string) {
   if (!agent) return
 
   // Tear down the agent's deployed Vercel project (its production runtime)
-  // BEFORE removing the DB row — otherwise we'd orphan a live, billable
+  // BEFORE removing the DB row, otherwise we'd orphan a live, billable
   // deployment we can no longer reach. If no Vercel token is configured
   // (local dev / Vercel not connected) we can't delete it, so we skip and let
   // the DB delete proceed. But when we DO have credentials and the API call
@@ -187,7 +187,7 @@ export async function deleteAgent(id: string) {
   // silently leaving the deployment alive.
   //
   // EXCEPTION: imported agents are linked to a Vercel project agent-army did NOT
-  // create — the operator owns it. Deleting the row must NEVER destroy their
+  // create; the operator owns it. Deleting the row must NEVER destroy their
   // deployment; it only unlinks from the fleet. They delete it in Vercel
   // themselves (the delete dialog says so).
   if (!agent.imported) {

@@ -1,7 +1,7 @@
 /**
  * Pure helpers for the deployAgent server action. Kept OUT of the
  * "use server" module because a "use server" file may only export async
- * functions — these are sync and need to be unit-testable in isolation.
+ * functions, and these are sync and need to be unit-testable in isolation.
  */
 
 /** Truncate a failure message before persisting it. */

@@ -4,12 +4,12 @@ import { db } from "@/lib/db"
 /**
  * Fixed-window rate limit, backed by Postgres so it holds across serverless
  * instances (this stack has no KV/Redis; an in-memory counter would reset per
- * instance). One atomic upsert per check — the window resets in-place when it
+ * instance). One atomic upsert per check; the window resets in-place when it
  * has rolled over, so a key's row never grows.
  *
  * Returns true if the call is ALLOWED, false if it should be throttled.
  *
- * note: fixed-window, not sliding — a burst straddling a window boundary can
+ * note: fixed-window, not sliding, so a burst straddling a window boundary can
  * briefly allow up to ~2x `limit`. Fine for abuse-bounding these endpoints;
  * swap for a sliding window only if precise smoothing is ever needed.
  *

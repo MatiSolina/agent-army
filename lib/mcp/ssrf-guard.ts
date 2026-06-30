@@ -39,7 +39,7 @@ function checkProtocolAndHost(u: URL, allowHttpInDev: boolean): string {
     throw new Error(`URL must be HTTPS: ${u.href}`)
   }
   // URL.hostname keeps brackets on IPv6 literals ("[::1]") and a trailing dot on
-  // FQDNs — strip both so net.isIP / the suffix checks see a bare host.
+  // FQDNs, so strip both so net.isIP / the suffix checks see a bare host.
   const host = u.hostname
     .toLowerCase()
     .replace(/^\[|\]$/g, "")
@@ -58,7 +58,7 @@ function checkProtocolAndHost(u: URL, allowHttpInDev: boolean): string {
 /**
  * Reject URLs that could drive server-side requests to internal hosts.
  * Requires https (http only in dev), resolves the hostname, and blocks any
- * private/loopback/link-local address — covers literal-IP and DNS-rebinding
+ * private/loopback/link-local address. Covers literal-IP and DNS-rebinding
  * at check time. Use before any server-side fetch of an operator-supplied URL.
  */
 export async function assertPublicHttpUrl(raw: string | URL): Promise<URL> {
@@ -85,7 +85,7 @@ export async function assertPublicHttpUrl(raw: string | URL): Promise<URL> {
  * Synchronous, structural-only variant for call sites that cannot await (the
  * AI SDK's `validateAuthorizationServerURL` hook is sync). Checks protocol,
  * obvious internal hostnames, and literal private IPs. note: no DNS lookup, so
- * a public hostname resolving to an internal IP is NOT caught here — the async
+ * a public hostname resolving to an internal IP is NOT caught here; the async
  * check at connect time guards the primary (operator-supplied) URL.
  */
 export function assertPublicHttpUrlSync(raw: string | URL): URL {

@@ -37,7 +37,7 @@ async function driftedAgentIds(target: string): Promise<string[]> {
 
 /**
  * Update ONE chosen bot first (canary). Operator eyeballs it before the rest.
- * Gated bumps (minor/major) throw — only patch bumps are auto-offered.
+ * Gated bumps (minor/major) throw; only patch bumps are auto-offered.
  */
 export async function startFleetCanary(
   canaryAgentId: string,

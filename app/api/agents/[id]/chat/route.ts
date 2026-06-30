@@ -12,7 +12,7 @@ const MAX_MESSAGE_CHARS = 20_000
 // Browser chat endpoint for the agent editor's "Test" tab. The reply comes from
 // the agent's REAL deployed Eve project on Vercel via lib/eve/session-client.
 // We return the final reply as JSON synchronously (await the deployed run) so the
-// client renders it — no async/background posting that races the response close.
+// client renders it, with no async/background posting that races the response close.
 export async function POST(
   request: Request,
   { params }: { params: Promise<{ id: string }> },
@@ -42,7 +42,7 @@ export async function POST(
     return Response.json({ error: "Invalid request body" }, { status: 400 })
   }
 
-  // Resolve the target URL from the AGENT ROW only — never from the client.
+  // Resolve the target URL from the AGENT ROW only, never from the client.
   // `preview: true` tests the latest preview build (allowed while it is
   // preview_ready OR already deployed); otherwise we hit the live production
   // runtime. The client only sends a boolean, so there is no SSRF surface.

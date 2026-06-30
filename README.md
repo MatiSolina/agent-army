@@ -3,7 +3,7 @@
 [![CI](https://github.com/MatiSolina/agent-army/actions/workflows/ci.yml/badge.svg)](https://github.com/MatiSolina/agent-army/actions/workflows/ci.yml)
 [![License: Apache 2.0](https://img.shields.io/badge/License-Apache_2.0-blue.svg)](./LICENSE)
 
-A control-plane to define AI agents and deploy each one as its **own [Eve](https://github.com/vercel/eve) project on Vercel** — its own runtime. Multiple agents = multiple independent deployments (a fleet).
+A control-plane to define AI agents and deploy each one as its **own [Eve](https://github.com/vercel/eve) project on Vercel**, with its own runtime. Multiple agents means multiple independent deployments: a fleet.
 
 ## How it works
 
@@ -28,7 +28,7 @@ cp .env.example .env.local   # then fill in the values
 pnpm dev
 ```
 
-See [`.env.example`](./.env.example) for the required environment variables. At minimum you need a Supabase project (`DATABASE_URL` + the `SUPABASE_*` keys), `FLEET_OPERATOR_EMAIL`, and — for the Deploy button — `VERCEL_TOKEN` + `VERCEL_TEAM_ID`.
+See [`.env.example`](./.env.example) for the required environment variables. At minimum you need a Supabase project (`DATABASE_URL` plus the `SUPABASE_*` keys), `FLEET_OPERATOR_EMAIL`, and, for the Deploy button, `VERCEL_TOKEN` and `VERCEL_TEAM_ID`.
 
 ### Database
 

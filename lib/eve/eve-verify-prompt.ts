@@ -4,7 +4,7 @@
  * When a per-agent preview-test of a gated eve bump fails (build / deploy / ping
  * error), the dashboard shows a copy-paste prompt the operator can hand to a
  * coding agent. The fix lives UPSTREAM in this repo's generator (`generate.ts` /
- * `project.ts`), not in each agent instance — instances are re-generated from the
+ * `project.ts`), not in each agent instance: instances are re-generated from the
  * generator, so the prompt points there.
  *
  * The prompt text is NEVER stored: it is rendered on demand from the agent name,

@@ -9,10 +9,10 @@ import { systemPromptInstruction } from "@/app/actions/generate-prompt-meta"
 // spend with a giant description or runaway generation.
 const MAX_DESCRIPTION = 4000
 
-// Model used to draft system prompts. A strong default — the user can edit the
+// Model used to draft system prompts. A strong default; the user can edit the
 // result. Plain gateway "provider/model" string (OIDC auth on Vercel,
 // AI_GATEWAY_API_KEY locally).
-// note: Haiku 4.5 instead of Sonnet 4.6 — Sonnet is gated behind paid
+// note: Haiku 4.5 instead of Sonnet 4.6 because Sonnet is gated behind paid
 // gateway credits and the free tier returns GatewayInternalServerError. Haiku
 // is good enough to draft instructions; the user edits the result anyway.
 const HELPER_MODEL = "anthropic/claude-haiku-4.5"

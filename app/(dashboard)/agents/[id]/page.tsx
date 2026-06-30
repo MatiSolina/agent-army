@@ -40,7 +40,7 @@ export default async function AgentDetailPage({
   // Deep-links into the deployed project's Vercel dashboard. Lazy: derive the
   // slug from the team env var + projectName(agent); only build URLs when both
   // the team slug is configured and the agent is actually deployed (no Vercel
-  // project exists before that). Never pass the env value to the client — only
+  // project exists before that). Never pass the env value to the client, only
   // the finished URL strings.
   const teamSlug = getVercelTeamSlug()
   const vercelUrls =
@@ -55,7 +55,7 @@ export default async function AgentDetailPage({
       allConnections={allConnections}
       secretStatus={secretStatus}
       vercelObservabilityUrl={vercelUrls?.observability}
-      // Vercel project's Environment Variables page — where secrets are actually
+      // Vercel project's Environment Variables page, where secrets are actually
       // edited/rotated. They are injected at deploy time, not from this UI.
       vercelEnvUrl={
         vercelUrls && `${vercelUrls.project}/settings/environment-variables`

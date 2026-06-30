@@ -1,7 +1,7 @@
 import type { FlatSpan } from "./parse"
 
 // Derives agent-facing metrics from OTLP flat spans. This is the one place that
-// knows the AI SDK / gen_ai attribute conventions — kept apart from the OTLP
+// knows the AI SDK / gen_ai attribute conventions, kept apart from the OTLP
 // parser so volatile vendor names don't leak into wire-format handling.
 
 export type AgentSpan = {

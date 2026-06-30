@@ -1,6 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
-// Module-level imports in deploy.ts that we don't exercise here — stub them so
+// Module-level imports in deploy.ts that we don't exercise here; stub them so
 // the module loads. The behavior under test is the deploy → promote wiring.
 // A tiny db stub whose select(...).from(...).where(...) yields one agent row, so
 // deployAgent can read eveVerifiedVersion to pick the eve pin.

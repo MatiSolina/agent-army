@@ -409,7 +409,7 @@ describe("getBuildErrorText", () => {
 })
 
 // ---------------------------------------------------------------------------
-// getBuildEvents — live build log tail
+// getBuildEvents: live build log tail
 // ---------------------------------------------------------------------------
 describe("getBuildEvents", () => {
   it("GETs the events URL with builds=1 and limit=-1", async () => {
@@ -456,7 +456,7 @@ describe("getBuildEvents", () => {
 // pollUntilReady
 // ---------------------------------------------------------------------------
 
-// getReadyState — single-shot, no loop. The workflow drives this itself with
+// getReadyState: single-shot, no loop. The workflow drives this itself with
 // durable sleeps; pollUntilReady keeps its blocking loop by calling it.
 describe("getReadyState", () => {
   it("maps a READY deployment to READY", async () => {
@@ -958,7 +958,7 @@ describe("promoteDeployment", () => {
     const [resolveUrl, resolveInit] = fetch.mock.calls[0]
     expect(resolveUrl).toContain("/v9/projects/my-agent")
     expect((resolveInit as RequestInit).method).toBe("GET")
-    // 2nd call promotes by the resolved prj_ id (NOT the name — name 404s).
+    // 2nd call promotes by the resolved prj_ id (NOT the name, which 404s).
     const [url, init] = fetch.mock.calls[1]
     expect(url).toContain("/v10/projects/prj_99/promote/dpl_42")
     expect(url).not.toContain("my-agent")

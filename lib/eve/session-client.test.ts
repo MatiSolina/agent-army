@@ -2,7 +2,7 @@ import { describe, it, expect, beforeEach, afterEach, vi } from "vitest"
 import { sendToDeployedAgent } from "./session-client"
 
 // ---------------------------------------------------------------------------
-// session-client — server-side proxy to a DEPLOYED Eve agent's HTTP API.
+// session-client: server-side proxy to a DEPLOYED Eve agent's HTTP API.
 //
 // Wire contract (Eve default /eve/v1/session*):
 //   - Start:    POST `${base}/eve/v1/session`            body {message}

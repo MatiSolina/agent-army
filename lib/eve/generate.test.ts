@@ -227,7 +227,7 @@ describe("buildEveAgent — connections", () => {
     expect(f).toContain('import { defineMcpClientConnection } from "eve/connections"')
     expect(f).toContain('url: "https://mcp.slack.com/mcp"')
     expect(f).toContain('auth: connect("slack/agentarmy")')
-    // Connect brokers the token — NOT our FM broker.
+    // Connect brokers the token, NOT our FM broker.
     expect(f).not.toContain("/api/mcp/token")
     expect(f).not.toContain("getToken")
   })
@@ -497,7 +497,7 @@ describe("buildEveAgent — slack channel (type-aware)", () => {
     expect(f).toContain('import { slackChannel } from "eve/channels/slack"')
     expect(f).toContain('import { connectSlackCredentials } from "@vercel/connect/eve"')
     expect(f).toContain("export default slackChannel(")
-    // The connector UID is injected JSON-escaped (q()) — no raw interpolation.
+    // The connector UID is injected JSON-escaped (q()), no raw interpolation.
     expect(f).toContain('connectSlackCredentials("slack/soporte")')
   })
 
@@ -560,7 +560,7 @@ describe("buildEveAgent — telegram channel (type-aware)", () => {
     expect(f).toBeDefined()
     expect(f).toContain('import { telegramChannel } from "eve/channels/telegram"')
     expect(f).toContain("export default telegramChannel(")
-    // The bot username is injected JSON-escaped (q()) — no raw interpolation.
+    // The bot username is injected JSON-escaped (q()), no raw interpolation.
     expect(f).toContain('botUsername: "my_bot"')
   })
 
@@ -724,7 +724,7 @@ describe("buildEveAgent — full shape", () => {
 // eve auto-discovers agent/instrumentation.ts and its mere presence implicitly
 // enables telemetry (no isEnabled toggle). We always emit the bare vanilla
 // registerOTel shape from the eve docs (instrumentation.md): auto-resolved
-// service name, NO hardcoded name, NO traceExporter, NO env secret — Vercel's
+// service name, NO hardcoded name, NO traceExporter, NO env secret; Vercel's
 // OIDC handles export. No user/config string is interpolated into this file, so
 // there is nothing to escape (hence no injection test for it).
 describe("buildEveAgent — instrumentation.ts (Tier-1 OTel)", () => {
@@ -745,7 +745,7 @@ describe("no code injection into generated source", () => {
     const ts = buildEveAgent(makeAgent({ model }), {
       connections: [],
     })["agent/agent.ts"]
-    // The value appears ONLY as a JSON-escaped literal — it cannot break out
+    // The value appears ONLY as a JSON-escaped literal; it cannot break out
     // into executable code (process.exit etc. stays inert string data).
     expect(ts).toContain(JSON.stringify(model))
   })
@@ -770,7 +770,7 @@ describe("no code injection into generated source", () => {
 })
 
 // ---------------------------------------------------------------------------
-// Harness guardrails — disable built-in tools via agent/tools/<slug>.ts
+// Harness guardrails: disable built-in tools via agent/tools/<slug>.ts
 // ---------------------------------------------------------------------------
 
 describe("buildEveAgent — harness guardrails", () => {
@@ -791,7 +791,7 @@ describe("buildEveAgent — harness guardrails", () => {
     expect(f).toBeDefined()
     expect(f).toContain('import { disableTool } from "eve/tools"')
     expect(f).toContain("export default disableTool()")
-    // Only bash — the other built-ins stay on.
+    // Only bash; the other built-ins stay on.
     expect(files["agent/tools/web_fetch.ts"]).toBeUndefined()
   })
 
@@ -836,7 +836,7 @@ describe("buildEveAgent — harness guardrails", () => {
       makeAgent({ sandbox: { enabled: true }, harness: { bash: false } }),
       empty,
     )
-    // Must sit ON the backend factory — eve's defineSandbox rejects a top-level
+    // Must sit ON the backend factory; eve's defineSandbox rejects a top-level
     // `networkPolicy` key ("Unknown key networkPolicy"), which fails the build.
     expect(files["agent/sandbox.ts"]).toContain(
       'vercel({ runtime: "node24", networkPolicy: "deny-all" })',

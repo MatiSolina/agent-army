@@ -35,7 +35,7 @@ let creditsCache: boolean | null = null
 /**
  * Whether the team's AI Gateway has paid credits. Probes one paid-only model: a
  * "do not have access" error means the team is on the free tier (no credits), so
- * the picker disables credit-only models. Any other outcome assumes credits — we
+ * the picker disables credit-only models. Any other outcome assumes credits: we
  * never lock the picker on a transient/unknown error. Only the definitive
  * free-tier result is cached.
  */
@@ -50,7 +50,7 @@ export async function hasGatewayCredits(): Promise<boolean> {
     if (/do not have access/i.test(msg)) {
       creditsCache = false
     } else {
-      return true // transient/unknown — don't lock the picker, don't cache
+      return true // transient/unknown: don't lock the picker, don't cache
     }
   }
   return creditsCache

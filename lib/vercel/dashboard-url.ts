@@ -1,7 +1,7 @@
 /**
  * Builds Vercel dashboard deep-link URLs for a single deployed agent project.
  *
- * Pure: no env reads, no fetch, no Date.now() — the caller supplies `teamSlug`
+ * Pure: no env reads, no fetch, no Date.now(). The caller supplies `teamSlug`
  * (from the VERCEL_TEAM_SLUG env var; never expose it to the client, only the
  * finished URL strings) and `projectName` (derived via projectName(agent)).
  *

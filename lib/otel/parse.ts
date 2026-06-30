@@ -1,6 +1,6 @@
 // Parses an OTLP/HTTP-JSON trace export (the payload Vercel POSTs to a custom
 // Trace Drain) into a flat list of spans. This layer understands ONLY the OTLP
-// wire format — a stable, specified shape — not the AI-SDK semantics on top of
+// wire format (a stable, specified shape), not the AI-SDK semantics on top of
 // it. Deriving agent/token/model metrics from these flat spans lives in
 // `./spans.ts`, so the volatile vendor conventions stay in one place.
 
@@ -19,7 +19,7 @@ export type FlatSpan = {
 }
 
 // OTLP serializes a value as a one-key object: { stringValue }, { intValue },
-// etc. int64 comes across as a string (JSON has no 64-bit int) — coerce to
+// etc. int64 comes across as a string (JSON has no 64-bit int), so coerce to
 // number, the values we care about (token counts) are well within 2^53.
 function anyValue(v: unknown): unknown {
   if (v == null || typeof v !== "object") return undefined
@@ -28,7 +28,7 @@ function anyValue(v: unknown): unknown {
   if ("boolValue" in o) return o.boolValue
   if ("intValue" in o) return Number(o.intValue)
   if ("doubleValue" in o) return o.doubleValue
-  // arrayValue / kvlistValue are not consumed yet — add when a metric needs them.
+  // arrayValue / kvlistValue are not consumed yet; add when a metric needs them.
   return undefined
 }
 

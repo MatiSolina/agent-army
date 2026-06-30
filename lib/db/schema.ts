@@ -13,7 +13,7 @@ import type {
   OAuthTokens,
 } from "@ai-sdk/mcp"
 // Type-only (erased at compile): the deploy snapshot shape stored in jsonb. The
-// cycle is safe — AgentConfigSnapshot is Pick<Agent, build fields>, which never
+// cycle is safe: AgentConfigSnapshot is Pick<Agent, build fields>, which never
 // includes deployedConfig itself.
 import type { AgentConfigSnapshot } from "@/lib/eve/config-drift"
 
@@ -67,11 +67,11 @@ export type AgentSandbox = {
 }
 
 // Per-agent guardrail: which built-in harness tools the deployed agent keeps.
-// Every flag defaults to ON when absent — an empty object (or a missing field)
+// Every flag defaults to ON when absent: an empty object (or a missing field)
 // means "full default harness", so existing agents are unaffected. Only an
 // explicit `false` disables a tool (the generator emits a `disableTool()` file).
 // For a locked-down customer-support bot, turn them all off so the model
-// literally cannot run shell, touch a filesystem, or reach the web — it can
+// literally cannot run shell, touch a filesystem, or reach the web; it can
 // still use its MCP connections.
 export type AgentHarness = {
   bash?: boolean // bash
@@ -105,7 +105,7 @@ export const agents = pgTable("agents", {
   // Tools and MCP connections are now global, reusable entities (see the
   // `tools` / `connections` tables). The agent only stores the assigned ids.
   // NOTE: the legacy inline `tools` / `connections` jsonb columns still exist
-  // in the DB but are intentionally not mapped here — they are ignored.
+  // in the DB but are intentionally not mapped here; they are ignored.
   toolIds: jsonb("toolIds").$type<string[]>().notNull().default([]),
   connectionIds: jsonb("connectionIds")
     .$type<string[]>()
@@ -148,12 +148,12 @@ export const agents = pgTable("agents", {
   // `eveUpdateOffer` treats `eveVerifiedVersion === latest` as a per-agent
   // override of the gate (offers the Update even when the bump is `gated`).
   eveVerifiedVersion: text("eveVerifiedVersion"),
-  // The raw (sanitized) error from the last FAILED preview-test — feeds the
+  // The raw (sanitized) error from the last FAILED preview-test, feeds the
   // copy-paste handoff prompt. Mutually exclusive with eveVerifiedVersion; both
   // are cleared on any config change (a stale verdict must not un-gate). Distinct
   // from `deploymentError` (which holds the last PROD deploy failure).
   eveVerifyError: text("eveVerifyError"),
-  // True for agents brought in via "Import deployed agent" — linked to a Vercel
+  // True for agents brought in via "Import deployed agent": linked to a Vercel
   // deployment agent-army did NOT create. The dashboard restricts them to prompt
   // updates (served live via /api/agents/<id>/runtime-config, no rebuild) and
   // NEVER tears down their Vercel project on delete (the operator owns it). See
@@ -176,7 +176,7 @@ export const channels = pgTable("channels", {
   // Meta phone_number_id (not a dialable number), so this is stored separately.
   kapsoPhoneNumber: text("kapsoPhoneNumber"),
   kapsoWebhookSecret: text("kapsoWebhookSecret"),
-  // Slack channel (type='slack'): the Vercel Connect connector UID — this
+  // Slack channel (type='slack'): the Vercel Connect connector UID, this
   // agent's Slack app identity (e.g. "slack/soporte"). Connect brokers the bot
   // token + webhook verification; no Slack secrets live in our DB.
   slackConnectUid: text("slackConnectUid"),
@@ -218,8 +218,8 @@ export const messages = pgTable("messages", {
 // ----- OTel spans ingested from Vercel Trace Drains (see app/api/drains/traces) -----
 // Each deployed agent emits @vercel/otel spans; a team-level Trace Drain POSTs
 // them here. spanId is the PK so at-least-once re-delivery is idempotent
-// (insert ... on conflict do nothing). note: no raw-attributes jsonb column
-// — add one when the UI needs tool-call/error detail beyond these summary cols.
+// (insert ... on conflict do nothing). note: no raw-attributes jsonb column;
+// add one when the UI needs tool-call/error detail beyond these summary cols.
 export const spans = pgTable(
   "spans",
   {
@@ -273,7 +273,7 @@ export const connections = pgTable("connections", {
     jsonb("oauthServerInfo").$type<OAuthAuthorizationServerInformation>(),
   // Live tokens (access/refresh). NEVER leaves the server.
   oauthTokens: jsonb("oauthTokens").$type<OAuthTokens>(),
-  // When oauthTokens was last written — the absolute issuance time used to derive
+  // When oauthTokens was last written: the absolute issuance time used to derive
   // expiry from the tokens' relative expires_in. A dedicated column (NOT the
   // row-wide updatedAt, which unrelated edits bump) so expiry stays accurate.
   oauthTokensUpdatedAt: timestamp("oauthTokensUpdatedAt"),

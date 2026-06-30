@@ -1,5 +1,5 @@
 // Official brand SVG paths (simple-icons, CC0), recolored to currentColor
-// so they inherit the dark-only Midday theme. Not invented — exact logos.
+// so they inherit the dark-only Midday theme. Not invented; exact logos.
 
 type Props = { className?: string }
 

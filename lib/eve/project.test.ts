@@ -173,7 +173,7 @@ describe("buildEveProject", () => {
   })
 
   // agent/instrumentation.ts is ALWAYS emitted (it imports `@vercel/otel`), so
-  // the conditional dep guard always trips for every agent — no absent-case
+  // the conditional dep guard always trips for every agent, so no absent-case
   // test is needed. We assert it both via the exported const and the literal
   // pin (exact, not a caret range) so a silent version bump is a test failure,
   // mirroring the EVE_VERSION double-assert above.
@@ -268,10 +268,10 @@ describe("buildEveProject", () => {
 
     // NOTE: "overrides eve/ai pins from opts" above already locks that the
     // candidate pin lands in package.json (the override + JSON.stringify
-    // serialization pre-date this branch — see lib/eve/project.ts). The only
+    // serialization pre-date this branch; see lib/eve/project.ts). The only
     // NEW behavior worth a dedicated test is injection-safety of a hostile pin.
     it("escapes a hostile pin value (JSON-safe, never code-injected)", () => {
-      // A pin must NOT be string-interpolated into the generated package.json —
+      // A pin must NOT be string-interpolated into the generated package.json;
       // it is serialized via JSON.stringify, so even a value carrying quotes /
       // braces / a newline stays a quoted JSON string and never breaks out.
       const hostile = '0.17.0", "scripts": {"postinstall": "rm -rf /"}, "x": "'

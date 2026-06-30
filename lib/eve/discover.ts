@@ -1,5 +1,5 @@
 /**
- * Stage -1 — Eve agent DISCOVERY (PURE). The inverse of {@link buildEveAgent}.
+ * Stage -1: Eve agent DISCOVERY (PURE). The inverse of {@link buildEveAgent}.
  *
  * `discoverEveAgent` takes the `{ relativePath: contents }` map of a deployed
  * Eve project's SOURCE files (retrieved from Vercel) and reconstructs the parts
@@ -21,7 +21,7 @@
  *
  * SECURITY. The files are TRUSTED only when they came straight from this
  * generator. A hand-edited or third-party project can contain arbitrary text, so
- * this module NEVER evals/imports/executes any content — it only regex-matches a
+ * this module NEVER evals/imports/executes any content: it only regex-matches a
  * literal and JSON.parses the matched string. Skill/schedule/subagent bodies are
  * treated as opaque untrusted markdown.
  */
@@ -117,7 +117,7 @@ function parseAgentComment(agentTs: string): { name: string | null; id: string |
 
 function parseConnection(file: string, fallbackName: string): DiscoveredConnection {
   const url = matchJsonString(file, /\burl:\s*("(?:[^"\\]|\\.)*")/) ?? ""
-  // description is `MCP server "<name>".` — recover the original-cased name.
+  // description is `MCP server "<name>".`; recover the original-cased name.
   const desc = matchJsonString(file, /\bdescription:\s*("(?:[^"\\]|\\.)*")/)
   const nameFromDesc = desc ? /^MCP server "(.*)"\.$/.exec(desc)?.[1] : null
   let auth: ConnAuthLabel = "none"
@@ -154,11 +154,11 @@ function parseSandbox(sandboxTs: string): DiscoveredSandbox {
 
 /**
  * Reconstruct a {@link DiscoveredAgent} from a deployed project's source file
- * map (keys WITHOUT any `src/` deployment prefix — the caller strips it).
+ * map (keys WITHOUT any `src/` deployment prefix; the caller strips it).
  *
  * Throws "Not an Eve agent" ONLY when neither `agent/agent.ts` (with a model)
- * nor a `package.json` with an `eve` dependency is present — the authoritative
- * gate. Otherwise every per-file parse failure is collected into `warnings` and
+ * nor a `package.json` with an `eve` dependency is present; that is the
+ * authoritative gate. Otherwise every per-file parse failure is collected into `warnings` and
  * the import proceeds with whatever was recoverable.
  */
 export function discoverEveAgent(files: Record<string, string>): DiscoveredAgent {

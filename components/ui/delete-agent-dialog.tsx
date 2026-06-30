@@ -14,8 +14,8 @@ import { Input } from "@/components/ui/input"
 
 /**
  * Hardened, double-confirmation delete dialog for an agent. Deleting an agent
- * tears down its Vercel project (the production runtime) — which cannot be
- * undone — so we make the operator type the agent's exact name AND the word
+ * tears down its Vercel project (the production runtime), which cannot be
+ * undone, so we make the operator type the agent's exact name AND the word
  * "delete" before the destructive button enables. Mirrors Vercel's own
  * "Delete Project" modal.
  */
@@ -34,7 +34,7 @@ export function DeleteAgentDialog({
   agentName: string
   onConfirm: () => void
   loading?: boolean
-  /** Imported agents are only UNLINKED — their Vercel project is never deleted. */
+  /** Imported agents are only UNLINKED; their Vercel project is never deleted. */
   imported?: boolean
 }) {
   return (
@@ -60,7 +60,7 @@ export function DeleteAgentDialog({
 }
 
 /**
- * Removing an IMPORTED agent only unlinks it from agent-army — its Vercel
+ * Removing an IMPORTED agent only unlinks it from agent-army; its Vercel
  * deployment keeps running and is the operator's to delete. Low-friction
  * single-confirm (re-importable anytime), NOT the hardened type-to-confirm
  * teardown used for agent-army-owned agents.

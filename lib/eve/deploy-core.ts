@@ -12,7 +12,7 @@
  *   - `getConnections()` (transitively called requireUserId) → connections are
  *     read session-free, or passed via `opts.connections`.
  *   - `revalidatePath()` → lives ONLY in the wrapper. This module imports
- *     neither `next/cache` nor `react`'s `cache()` — it is a plain module, safe
+ *     neither `next/cache` nor `react`'s `cache()`; it is a plain module, safe
  *     outside a request in Next 16.
  *
  * Everything else (db, CAS deploy-lock, slug re-assert, build, env, Vercel
@@ -58,7 +58,7 @@ export type DeployAgentCoreOpts = {
   eveVersion?: string
   /** Override the ai pin (resolved per-eve-version from npm). */
   aiVersion?: string
-  /** Rebuild from `agent.deployedConfig` (version-only update) — Task 4. */
+  /** Rebuild from `agent.deployedConfig` (version-only update); Task 4. */
   fromSnapshot?: boolean
   /** Skip the internal READY poll; the caller (workflow) polls via getReadyState. */
   skipPoll?: boolean
@@ -84,7 +84,7 @@ export async function deployAgentCore(
   agentId: string,
   opts: DeployAgentCoreOpts = {},
 ): Promise<{ previewUrl: string; previewDeploymentId: string }> {
-  // 1. Resolve (scoped read) — session-free.
+  // 1. Resolve (scoped read), session-free.
   const rows = await db
     .select()
     .from(agents)
@@ -103,7 +103,7 @@ export async function deployAgentCore(
   const assignedChannel = assignedChannels[0] ?? null
   if (assignedChannel) {
     if (assignedChannel.type === "slack") {
-      // Slack uses Vercel Connect — no creds in our DB, just the connector UID.
+      // Slack uses Vercel Connect: no creds in our DB, just the connector UID.
       if (!assignedChannel.slackConnectUid) {
         throw new Error("Assigned Slack channel is missing its Vercel Connect connector UID")
       }
@@ -134,7 +134,7 @@ export async function deployAgentCore(
     }
   }
 
-  // 2. CAS deploy-lock — only transition a row NOT already "deploying". Skipped
+  // 2. CAS deploy-lock: only transition a row NOT already "deploying". Skipped
   //    in previewTest mode: a preview-test must NOT flip the live "deployed" row
   //    to "deploying" (it builds a throwaway preview, the prod runtime is
   //    untouched). It still refuses to run on a row mid-deploy to avoid racing a
@@ -168,7 +168,7 @@ export async function deployAgentCore(
 
   try {
     // fromSnapshot: a version-only update rebuilds from `agent.deployedConfig`
-    // (the frozen snapshot), NOT the live row — otherwise "update eve" would
+    // (the frozen snapshot), NOT the live row, otherwise "update eve" would
     // silently ship any pending config edits. The live row supplies immutable
     // id + userId; the snapshot overrides the 14 BUILD_FIELDS (incl. name →
     // same projectName → same Vercel project, not a new one). Guard: no
@@ -303,7 +303,7 @@ export async function deployAgentCore(
     const url = created.url
 
     // previewTest: the live row must stay exactly as it was (still "deployed" on
-    // its current eve version). Skip ALL persistence here — the throwaway preview
+    // its current eve version). Skip ALL persistence here: the throwaway preview
     // handle goes back to testEvePreview, which records the verdict and deletes
     // the preview on failure. Nothing about the prod runtime changed.
     if (opts.previewTest) {
@@ -311,7 +311,7 @@ export async function deployAgentCore(
     }
 
     // 8. Persist preview state. On the fromSnapshot (version-only) path do NOT
-    //    re-stamp deployedConfig/Hash — that would erase pending drift and
+    //    re-stamp deployedConfig/Hash, which would erase pending drift and
     //    falsely mark unsaved edits as deployed. Only the pin + lastDeployedAt
     //    move. The normal deploy path keeps re-stamping from the live row.
     const driftStamp = opts.fromSnapshot
@@ -367,7 +367,7 @@ export async function deployAgentCore(
 
 /**
  * Promote an already-built deployment to the agent's production runtime
- * (Vercel's native promote — also used for rollback to an older build).
+ * (Vercel's native promote, also used for rollback to an older build).
  * Session-free: takes an explicit `userId`.
  */
 export async function promoteAgentCore(
@@ -408,7 +408,7 @@ export async function promoteAgentCore(
 
   // Telegram inbound registration. The prod URL only exists now (promote), and
   // Telegram has no Vercel Connect, so we register the webhook here via the Bot
-  // API. Best-effort: a failure degrades only the inbound binding — the deploy
+  // API. Best-effort: a failure degrades only the inbound binding; the deploy
   // is already finalized above (deploymentStatus='deployed') and this block can
   // NEVER throw out of promote. (Mirrors the Slack attachTriggerDestination
   // catch-and-log style.)
@@ -464,7 +464,7 @@ export async function promoteAgentCore(
   // Discord inbound registration. Same best-effort shape as telegram above: the
   // prod URL only exists now (promote), Discord has no Vercel Connect, and the
   // interactions endpoint is API-settable, so we register it here via the
-  // Discord REST API. A failure degrades only the inbound binding — the deploy
+  // Discord REST API. A failure degrades only the inbound binding; the deploy
   // is already finalized (deploymentStatus='deployed') and this block can NEVER
   // throw out of promote. The bot token lives in the Authorization header and is
   // never logged.
@@ -496,7 +496,7 @@ export async function promoteAgentCore(
         }
       })
       .catch(async (err) => {
-        // Never log the bot token — only the error string (which the helper
+        // Never log the bot token, only the error string (which the helper
         // guarantees is token-free).
         console.error(`[promote] discord setInteractionsEndpoint for "${slug}" failed: ${err}`)
         try {
@@ -520,7 +520,7 @@ export async function promoteAgentCore(
   // a client-supplied secret_key, so we register the deployed agent's literal
   // /kapso/webhook URL here with the channel's auto-minted secret. Idempotent
   // (registerKapsoWebhook PATCHes an existing endpoint), so re-running every
-  // promote never duplicates. A failure degrades only the inbound binding — the
+  // promote never duplicates. A failure degrades only the inbound binding; the
   // deploy is already finalized (deploymentStatus='deployed') and this block can
   // NEVER throw out of promote. The api key + secret are never logged.
   if (
@@ -552,7 +552,7 @@ export async function promoteAgentCore(
         }
       })
       .catch(async (err) => {
-        // Never log the api key or secret — only the error string (which the
+        // Never log the api key or secret, only the error string (which the
         // helper guarantees is credential-free).
         console.error(`[promote] kapso registerWebhook for "${slug}" failed: ${err}`)
         try {

@@ -176,7 +176,7 @@ function SkillsShDialog({
 
   // Load the curated list the first time the dialog opens. Runs on `open`
   // (not the Dialog's onOpenChange) so it fires no matter how the dialog was
-  // opened — including the parent button that sets `open` directly.
+  // opened, including the parent button that sets `open` directly.
   useEffect(() => {
     if (!open || loadedRef.current) return
     loadedRef.current = true

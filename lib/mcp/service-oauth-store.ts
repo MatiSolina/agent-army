@@ -9,8 +9,8 @@ import type { OAuthStore, OAuthRecord } from "./oauth-store"
  *
  * Identical to {@link DbOAuthStore} except it scopes by the constant
  * single-operator owner (`DEMO_USER_ID`) instead of calling `requireUserId()`.
- * The token broker endpoint (`/api/mcp/token`) is M2M — authenticated by a
- * shared secret, NOT an operator session — so it cannot use the session-bound
+ * The token broker endpoint (`/api/mcp/token`) is M2M, authenticated by a
+ * shared secret rather than an operator session, so it cannot use the session-bound
  * `DbOAuthStore` (whose `requireUserId()` throws "Unauthorized" with no session).
  *
  * Every read and write is still scoped by BOTH the connection id AND the

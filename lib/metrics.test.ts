@@ -28,7 +28,7 @@ const NOW = new Date("2024-01-15T15:00:00.000Z")
 // Dataset: 2 conversations, mixed roles, 2 agents, old+recent messages
 // ---------------------------------------------------------------------------
 
-// conv-1: agent-1, 3 messages — 2 recent, 1 old
+// conv-1: agent-1, 3 messages: 2 recent, 1 old
 const MSG_C1_USER_RECENT = makeMessage({
   id: "1",
   conversationId: "conv-1",
@@ -51,7 +51,7 @@ const MSG_C1_USER_OLD = makeMessage({
   createdAt: new Date("2024-01-14T10:00:00.000Z"), // >24h ago → old
 })
 
-// conv-2: agent-2, 2 messages — 1 recent, 1 old
+// conv-2: agent-2, 2 messages: 1 recent, 1 old
 const MSG_C2_USER_RECENT = makeMessage({
   id: "4",
   conversationId: "conv-2",
@@ -67,7 +67,7 @@ const MSG_C2_ASSISTANT_OLD = makeMessage({
   createdAt: new Date("2024-01-13T00:00:00.000Z"), // 2 days ago → old
 })
 
-// conv-3: null agentId, 1 message — recent
+// conv-3: null agentId, 1 message, recent
 const MSG_C3_NO_AGENT = makeMessage({
   id: "6",
   conversationId: "conv-3",

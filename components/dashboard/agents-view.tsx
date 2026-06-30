@@ -146,7 +146,7 @@ export function AgentsView({
                 </div>
 
                 <div className="hidden items-center gap-2 sm:flex">
-                  {/* Imported agents are update-only — they can't be redeployed
+                  {/* Imported agents are update-only: they can't be redeployed
                       from the dashboard, so a config-drift "needs redeploy" badge
                       is meaningless for them. */}
                   {!agent.imported && hasConfigDrift(agent) && (
@@ -239,7 +239,7 @@ export function AgentsView({
  * After a canary completes, shows the result + a Continue-rollout button.
  *
  * Leak notice: a version update also applies any pending edits to assigned
- * connections (their content isn't snapshotted) — surfaced in the default card.
+ * connections (their content isn't snapshotted), surfaced in the default card.
  */
 function FleetUpdateBanner({
   eve,
@@ -265,7 +265,7 @@ function FleetUpdateBanner({
   // Deployed agents not yet on the LATEST eve. For a gated (breaking) bump these
   // are updated per-agent from each editor (safety-tested), so the notice below
   // is only relevant while some agent is still behind the latest. Once every
-  // agent is on the latest, there is nothing for the operator to do — the only
+  // agent is on the latest, there is nothing for the operator to do. The only
   // thing still "behind" is the dev's EVE_VERSION pin, which isn't their concern.
   const agentsBehindLatest = agents.filter(
     (a) =>

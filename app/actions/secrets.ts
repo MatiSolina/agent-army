@@ -54,7 +54,7 @@ async function expectedKeysForAgent(
     .from(channels)
     .where(and(eq(channels.agentId, agent.id), eq(channels.userId, userId)))
 
-  // Single source of truth for "what keys this agent can have" — gates token
+  // Single source of truth for "what keys this agent can have". Gates token
   // connections on token-auth so OAuth/none connections don't render a phantom
   // <SLUG>_TOKEN field. Mirrors exactly what buildAgentEnvSpec pushes.
   return expectedEnvKeys({
@@ -66,7 +66,7 @@ async function expectedKeysForAgent(
 
 /**
  * Report which of the agent's EXPECTED env keys are currently configured on its
- * Vercel project. Returns keys + booleans ONLY — never any value.
+ * Vercel project. Returns keys + booleans ONLY, never any value.
  */
 export async function getAgentSecretStatus(
   agentId: string,

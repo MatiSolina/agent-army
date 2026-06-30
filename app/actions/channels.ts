@@ -29,7 +29,7 @@ import { getVercelTeamSlug } from "@/lib/vercel/team-slug"
 // are swallowed (the core persists its own failure state); a deploy already in
 // progress throws and is ignored.
 //
-// NOTE: do NOT pre-write deploymentStatus='deploying' here — deploy-core uses a
+// NOTE: do NOT pre-write deploymentStatus='deploying' here. deploy-core uses a
 // CAS deploy-lock that refuses to start if the row is already 'deploying', so a
 // pre-write would make the background deploy throw "already in progress" and
 // leave the agent stuck deploying forever. The "show the build immediately"
@@ -41,7 +41,7 @@ function autoRedeploy(...agentIds: (string | null | undefined)[]) {
       try {
         await deployAndPromoteAgent(agentId)
       } catch {
-        // already-in-progress / transient — the core records its own state
+        // already-in-progress or transient; the core records its own state
       }
     })
     revalidatePath(`/agents/${agentId}`)
@@ -73,7 +73,7 @@ export async function getChannelsForClient(): Promise<ClientChannel[]> {
   return rows.map(toClientChannel)
 }
 
-// Not exported — same secret-leak reason as getChannels above.
+// Not exported: same secret-leak reason as getChannels above.
 async function getChannel(id: string) {
   const userId = await requireUserId()
   const rows = await db
@@ -269,7 +269,7 @@ function normalizeChannelInput(
         ? (existing?.telegramBotUsername ?? null)
         : text(input.telegramBotUsername, MAX_ID_LENGTH) || null,
     // Discord: three static secrets, preserve-on-blank like the telegram token.
-    // NOTE: unlike telegram there is NO auto-mint here — none of the three are
+    // NOTE: unlike telegram there is NO auto-mint here; none of the three are
     // generated. The public key is issued by the Discord Developer Portal.
     discordBotToken:
       input.discordBotToken === undefined
@@ -298,7 +298,7 @@ function normalizeChannelInput(
   // Generate the Kapso webhook signing secret ONCE at create time when none was
   // provided. Kapso's create-webhook endpoint takes a client-supplied secret_key,
   // so the control plane mints it here, bakes it into the agent
-  // (KAPSO_WEBHOOK_SECRET) and registers it on promote — the operator never picks
+  // (KAPSO_WEBHOOK_SECRET) and registers it on promote; the operator never picks
   // or pastes a secret. Never re-mint on update (that would break the deployed
   // agent's HMAC check until the next promote re-registers).
   if (!existing && next.type === "kapso" && !next.kapsoWebhookSecret) {
@@ -510,7 +510,7 @@ export async function markChannelWebhookRegistered(
  * secret and POST it to the agent's /kapso/webhook. A 200 proves the
  * endpoint is live AND the deployed secret matches (signature accepted) WITHOUT
  * triggering an agent turn (no inbound messages in the payload). A 401 means the
- * deployed agent's secret differs from the channel's — i.e. it needs a redeploy.
+ * deployed agent's secret differs from the channel's, i.e. it needs a redeploy.
  */
 export async function testChannelWebhook(
   channelId: string,

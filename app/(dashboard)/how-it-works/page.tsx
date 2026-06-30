@@ -13,7 +13,7 @@ import {
 
 // Static explainer of the control-plane model: config in Supabase is the source,
 // "Deploy" compiles it into a real Eve project on Vercel (the runtime), and each
-// deploy is a snapshot. Pure server component — ships zero client JS.
+// deploy is a snapshot. Pure server component, ships zero client JS.
 
 const STEPS = [
   {

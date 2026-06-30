@@ -70,7 +70,7 @@ export const AGENT_TEMPLATES: AgentTemplate[] = [
   {
     // Adapted from Vercel's open-source eve Content Agent template
     // (github.com/vercel-labs/eve-content-agent-template). Persona + workflow
-    // only — its Notion/Slack/Blob wiring comes from MCP connections you add
+    // only; its Notion/Slack/Blob wiring comes from MCP connections you add
     // in the editor, not from this config row.
     id: "content-agent",
     name: "Content Agent",

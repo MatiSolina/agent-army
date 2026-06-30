@@ -19,8 +19,8 @@ export const dynamic = "force-dynamic"
  *
  * Discovery, Dynamic Client Registration, PKCE generation, and CSRF state are
  * all handled by the AI SDK's `auth()` driven through our provider. We either
- * 302 the browser to the authorization server, or — if a refresh token already
- * minted fresh tokens — go straight back to /mcp as connected.
+ * 302 the browser to the authorization server, or (if a refresh token already
+ * minted fresh tokens) go straight back to /mcp as connected.
  */
 export async function GET(
   req: NextRequest,
@@ -52,7 +52,7 @@ export async function GET(
 
   // Allowlist: OAuth connect is ONLY for vetted catalog OAuth servers (the only
   // way to create one is createOAuthConnection from MCP_CATALOG). Refusing any
-  // other URL removes the arbitrary-URL server-side-request (SSRF) surface — a
+  // other URL removes the arbitrary-URL server-side-request (SSRF) surface: a
   // custom/token connection can never drive auth() discovery to an attacker host.
   const isCatalogOAuth = MCP_CATALOG.some(
     (e) => e.auth === "oauth" && e.url === row.url,
@@ -97,7 +97,7 @@ export async function GET(
     })
 
     if (result === "AUTHORIZED") {
-      // Existing refresh token already produced tokens — no redirect needed.
+      // Existing refresh token already produced tokens; no redirect needed.
       await db
         .update(connections)
         .set({ status: "connected", oauthError: null, updatedAt: new Date() })
@@ -114,7 +114,7 @@ export async function GET(
     }
     return NextResponse.redirect(target)
   } catch (err) {
-    // Log ONLY the error class — not err.message, which can carry an upstream
+    // Log ONLY the error class, not err.message, which can carry an upstream
     // authorization-server response body. Persist a generic message so we never
     // echo an upstream response into the UI either.
     const cls = err instanceof Error ? err.name : "Error"

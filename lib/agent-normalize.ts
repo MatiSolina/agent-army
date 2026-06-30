@@ -3,7 +3,7 @@
  * model id + cron, mints stable ids, and clamps numbers. Extracted from
  * `app/actions/agents.ts` so BOTH the editor save path and the deployed-agent
  * IMPORT path (`app/actions/import.ts`) run untrusted input through the exact
- * same validator — no duplication, no drift. No I/O.
+ * same validator: no duplication, no drift. No I/O.
  */
 
 import type {
@@ -174,7 +174,7 @@ function normalizeSandbox(value: unknown): AgentSandbox {
 }
 
 // Only an explicit `false` disables a built-in tool; anything else (missing,
-// true, garbage) leaves it on — the safe default keeps the full harness.
+// true, garbage) leaves it on; the safe default keeps the full harness.
 function normalizeHarness(value: unknown): AgentHarness {
   const v = isRecord(value) ? value : {}
   const off = (flag: unknown): boolean | undefined =>

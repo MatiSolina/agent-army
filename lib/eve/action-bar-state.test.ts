@@ -52,7 +52,7 @@ describe("agentStatusBadge", () => {
 
   it("stays Active when a newer preview is staged over a live production URL (the bug)", () => {
     // deploymentStatus is now "preview_ready" but the promoted prod URL persists,
-    // so the agent is still live — not "Offline"/"Draft".
+    // so the agent is still live, not "Offline"/"Draft".
     expect(
       agentStatusBadge({ enabled: true, deploymentUrl: "https://prod.vercel.app" }),
     ).toEqual({ label: "Active", live: true })

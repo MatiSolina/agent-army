@@ -226,7 +226,7 @@ export default async function ObservabilityPage() {
       .from(agents)
       .where(eq(agents.userId, userId)),
     // Self-healing: idempotent, and reports plan_blocked on Pro Trial. note:
-    // runs on every load of this admin page — cheap (1 GET); cache in
+    // runs on every load of this admin page, cheap (1 GET); cache in
     // app_settings only if it ever shows up as slow. Never let it break the page.
     ensureTraceDrain({
       token: process.env.VERCEL_TOKEN,
@@ -281,7 +281,7 @@ export default async function ObservabilityPage() {
 
       {rows.length === 0 ? (
         !deployedAgent ? (
-          // Nothing deployed yet — don't talk about plans, there's nothing to trace.
+          // Nothing deployed yet; don't talk about plans, there's nothing to trace.
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <Activity className="mb-4 size-10 text-muted-foreground/40" aria-hidden="true" />
             <p className="text-base font-medium text-foreground">No deployed agents yet</p>
@@ -302,7 +302,7 @@ export default async function ObservabilityPage() {
             billingUrl={billingUrl}
           />
         ) : (
-          // Drain is active (or its status is unknown) — just waiting for traffic.
+          // Drain is active (or its status is unknown); just waiting for traffic.
           <div className="flex flex-col items-center justify-center py-24 text-center">
             <Activity className="mb-4 size-10 text-muted-foreground/40" aria-hidden="true" />
             <p className="text-base font-medium text-foreground">No traces yet</p>

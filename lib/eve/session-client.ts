@@ -1,4 +1,4 @@
-// session-client — server-side proxy to a DEPLOYED Eve agent's HTTP API.
+// session-client: server-side proxy to a DEPLOYED Eve agent's HTTP API.
 //
 // Every deployed Eve project exposes a default HTTP API at /eve/v1/session*
 // (no generated file needed). Its auth is [localDev(), vercelOidc()]: browsers
@@ -41,7 +41,7 @@ type SendArgs = {
   /**
    * Event cursor from the previous turn. The eve stream is durable and replays
    * from index 0, so a follow-up MUST resume past the already-consumed events
-   * (`?startIndex=`) — otherwise it stops at turn 1's session.waiting and serves
+   * (`?startIndex=`); otherwise it stops at turn 1's session.waiting and serves
    * that turn's stale reply for every subsequent message.
    */
   startIndex?: number
@@ -146,7 +146,7 @@ export async function sendToDeployedAgent({
     if (startJson.sessionId) resolvedSessionId = startJson.sessionId
     if (startJson.continuationToken) resolvedToken = startJson.continuationToken
   } catch {
-    // No JSON body — keep the passed-in handles (some follow-up responses).
+    // No JSON body: keep the passed-in handles (some follow-up responses).
   }
 
   if (!resolvedSessionId) {
@@ -155,7 +155,7 @@ export async function sendToDeployedAgent({
 
   // The eve session stream is DURABLE: it stays open after the turn
   // (session.waiting) waiting for the next message. We must stop reading at the
-  // turn boundary and tear the socket down WITHOUT awaiting reader.cancel() — on
+  // turn boundary and tear the socket down WITHOUT awaiting reader.cancel(); on
   // serverless runtimes cancelling a still-open upstream stream can hang. An
   // AbortController gives us a hard stop plus a safety timeout.
   const resumeFrom = startIndex ?? 0
@@ -217,7 +217,7 @@ const BOUNDARY = new Set(["session.waiting", "session.completed", "session.faile
  * Read the NDJSON event stream line by line and return the FINAL assistant text.
  *
  * Reads incrementally and stops at the first turn boundary (session.waiting /
- * session.completed / session.failed) rather than waiting for EOF — the durable
+ * session.completed / session.failed) rather than waiting for EOF; the durable
  * stream can stay open past the turn. The last `message.completed` whose
  * finishReason is not "tool-calls" wins (earlier ones are tool-call narration).
  * `session.failed` throws so the tester sees an error instead of an empty reply.
@@ -227,7 +227,7 @@ async function readFinalText(
   ac: AbortController,
 ): Promise<{ text: string; consumed: number }> {
   const reader = res.body?.getReader()
-  // No streaming body (shouldn't happen for the stream route) — fall back to text.
+  // No streaming body (shouldn't happen for the stream route): fall back to text.
   if (!reader) return finalTextFromLines((await res.text()).split("\n"))
 
   const decoder = new TextDecoder()
@@ -296,7 +296,7 @@ async function readFinalText(
   }
   clearTimeout(timeout)
 
-  // Stream ended without an explicit boundary — use whatever's buffered.
+  // Stream ended without an explicit boundary: use whatever's buffered.
   if (buffer.trim()) {
     const ev = parseEvent(buffer)
     if (ev) {

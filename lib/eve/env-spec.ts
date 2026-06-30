@@ -44,7 +44,7 @@ export type EnvVarSpec = { key: string; value: string }
 /**
  * The env var name eve reads for a static-token connection, derived from the
  * connection NAME. Mirrors generate.ts exactly (underscore separator, lowercase
- * → UPPER), so the pushed key always matches what `emitConnection` references.
+ * to UPPER), so the pushed key always matches what `emitConnection` references.
  */
 export function connectionTokenEnvKey(connName: string): string {
   return tokenEnvVar(slug(connName, "connection"))
@@ -157,7 +157,7 @@ export function buildAgentEnvSpec(args: {
 }
 
 /**
- * The env keys the Secrets tab should render as configurable for an agent — the
+ * The env keys the Secrets tab should render as configurable for an agent: the
  * exact set `buildAgentEnvSpec` is capable of pushing, regardless of whether a
  * value is currently stored. Returned KEYS ONLY; never any value.
  *

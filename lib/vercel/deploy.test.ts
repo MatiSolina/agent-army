@@ -408,7 +408,7 @@ describe("parseProductionDeploymentId", () => {
 })
 
 // ---------------------------------------------------------------------------
-// extractBuildLogLines — ordered, human-readable build log tail
+// extractBuildLogLines: ordered, human-readable build log tail
 // ---------------------------------------------------------------------------
 describe("extractBuildLogLines", () => {
   it("returns text from stdout/stderr/command events in order", () => {
@@ -461,7 +461,7 @@ describe("extractBuildLogLines", () => {
 })
 
 // ---------------------------------------------------------------------------
-// summarizeDeployProgress — classify the newest deployment into a UI phase
+// summarizeDeployProgress: classify the newest deployment into a UI phase
 // ---------------------------------------------------------------------------
 describe("summarizeDeployProgress", () => {
   const dep = (over: Partial<{ id: string; url: string; state: string; createdAt: number; target: string | null }>) => ({

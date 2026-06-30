@@ -83,10 +83,10 @@ import {
 } from "lucide-react"
 
 // Occasional tabs (Test/Secrets/Deployments) are client-only and rarely the
-// first thing a session opens — defer their bundles until the tab is shown.
+// first thing a session opens, so defer their bundles until the tab is shown.
 // The core edit tabs (General/Capabilities/Automation) stay eager to avoid
 // tab-switch jank where most editing happens. (Deployments' data AND chunk are
-// prefetched on mount — see below — so opening that tab is instant.)
+// prefetched on mount (see below) so opening that tab is instant.)
 const AgentPlayground = dynamic(
   () =>
     import("@/components/dashboard/agent-playground").then((m) => ({
@@ -121,7 +121,7 @@ const RUNTIME_OPTIONS = [
 // Built-in eve tools the operator can turn off per agent. Each switch maps to one
 // AgentHarness flag; ON = the agent keeps the tool. Turning a switch off makes the
 // model literally unable to call that capability (a disableTool() file is emitted),
-// which is the real guardrail for a customer-support bot — not just a prompt rule.
+// which is the real guardrail for a customer-support bot, not just a prompt rule.
 const HARNESS_TOOLS: { key: keyof AgentHarness; label: string; hint: string }[] = [
   { key: "bash", label: "Shell (bash)", hint: "Run shell commands in the sandbox." },
   { key: "files", label: "File tools", hint: "Read, write, glob and grep files." },
@@ -145,7 +145,7 @@ export function AgentEditor({
   allConnections: ClientConnection[]
   secretStatus: { key: string; configured: boolean }[]
   // Server-computed (lib/eve/config-drift): the SAVED config differs from the
-  // config the live deployment was built from. Reliable hash compare — unlike a
+  // config the live deployment was built from. Reliable hash compare, unlike a
   // naive updatedAt > lastDeployedAt check, which deploy/promote/failure all bump.
   hasDrift: boolean
   // Server-computed field-by-field diff of the saved config vs the deployed
@@ -155,7 +155,7 @@ export function AgentEditor({
   // drive the eve-version affordances: a non-gated patch shows "Update to <v>",
   // a gated (breaking) bump shows the "Test <v>" preview-test (and, once this
   // agent verifies it, the un-gated "Update to <v>"). NOT the auto-update target
-  // — for a gated bump that is pinned back to the current version. deployAgent
+  // for a gated bump that is pinned back to the current version. deployAgent
   // re-resolves the real pin server-side from this agent's verified verdict.
   currentEveVersion: string
   // Finished deep-link to the deployed project's Vercel Observability page.
@@ -335,7 +335,7 @@ export function AgentEditor({
     agent.deploymentStatus !== "deploying" &&
     (buildDirty || hasDrift)
 
-  // How many fields differ from the saved definition — drives the "Save · N"
+  // How many fields differ from the saved definition; drives the "Save · N"
   // count. Cheap shallow compare over the same objects `dirty` is built from.
   const saveChangeCount = useMemo(() => {
     const a = JSON.parse(savedConfig) as Record<string, unknown>
@@ -346,7 +346,7 @@ export function AgentEditor({
   }, [savedConfig, currentConfig])
 
   // The two buttons carry their own state (label + amber dot + count), which is
-  // why the old "undeployed build changes" banner below is gone — see
+  // why the old "undeployed build changes" banner below is gone. See
   // lib/eve/action-bar-state.ts.
   const saveState = saveButtonState({
     dirty,
@@ -368,7 +368,7 @@ export function AgentEditor({
   })
 
   // Deployments live here (not in the Deployments tab) so the Vercel REST fetch
-  // starts the moment the agent is selected — by the time the user opens the tab
+  // starts the moment the agent is selected; by the time the user opens the tab
   // the list is already loaded instead of showing a spinner. `null` = first load.
   const [deployments, setDeployments] = useState<Deployment[] | null>(null)
   const [loadingDeployments, startLoadingDeployments] = useTransition()
@@ -385,7 +385,7 @@ export function AgentEditor({
   }, [loadDeployments])
 
   // Auto-build on create: a from-template agent lands here with ?building=1 and
-  // kicks off one preview build in the background (no modal — you configure
+  // kicks off one preview build in the background (no modal, you configure
   // while it builds). Ref-guarded + server CAS-locked so it can't double-fire;
   // the flag is dropped from the URL so a refresh won't re-trigger it.
   const autoBuildFired = useRef(false)
@@ -499,7 +499,7 @@ export function AgentEditor({
   // One-click "Update Eve to <v>" for a gated (breaking) bump: silently
   // preview-test the candidate first, and only roll it out to prod if it
   // passes. A failure surfaces the copy-paste handoff prompt instead. The user
-  // never sees a separate "Test" step — the safety check is invisible.
+  // never sees a separate "Test" step; the safety check is invisible.
   const runEveUpdate = async () => {
     setEveTesting(true)
     try {
@@ -627,7 +627,7 @@ export function AgentEditor({
         </div>
 
         <div className="flex flex-wrap items-center gap-2">
-          {/* Deep-link to the deployed project's Vercel Observability page — a
+          {/* Deep-link to the deployed project's Vercel Observability page, a
               SEPARATE destination from the "Deployed" badge (which points at the
               runtime URL). Hidden unless the page supplied a finished URL. */}
           {vercelObservabilityUrl && (
@@ -691,7 +691,7 @@ export function AgentEditor({
         </div>
       </div>
 
-      {/* "Update Eve" affordance — a prominent full-width banner, not a link in
+      {/* "Update Eve" affordance: a prominent full-width banner, not a link in
           a pill. For a gated (breaking) bump we run a silent preview-test first
           (runEveUpdate) and only roll out if it passes; for a patch/verified
           bump we deploy directly (requestDeploy). Either way the CTA reads
@@ -785,7 +785,7 @@ export function AgentEditor({
       )}
 
       {/* Actionable notices: full-width banners, not status pills. A long
-          sentence + actions never fit a rounded-full pill on a phone — they
+          sentence + actions never fit a rounded-full pill on a phone; they
           stack cleanly here (message on top, actions below; inline on ≥sm). */}
       {!deploying &&
         agent.deploymentStatus === "preview_ready" &&
@@ -1012,7 +1012,7 @@ export function AgentEditor({
         </TabsContent>
 
         {/* Capabilities: Skills + Connections + Subagents.
-            Tools are MCP-only — they come from assigned MCP connections, not a
+            Tools are MCP-only: they come from assigned MCP connections, not a
             separate custom-tools surface. */}
         <TabsContent value="capabilities" className="mt-6 space-y-10">
           <section>
@@ -1131,7 +1131,7 @@ export function AgentEditor({
 
           <div className="border-t border-border" />
 
-          {/* Built-in tools — guardrails */}
+          {/* Built-in tools: guardrails */}
           <div className="space-y-4">
             <div className="space-y-1">
               <h3 className="text-sm font-medium text-foreground">

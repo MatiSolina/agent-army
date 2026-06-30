@@ -1,5 +1,5 @@
 // Idempotent, additive migration: add the `imported` flag to the `agents` table.
-// True for agents brought in via the "Import deployed agent" flow — they are
+// True for agents brought in via the "Import deployed agent" flow. They are
 // linked to a Vercel deployment agent-army did NOT create, so the dashboard
 // restricts them to prompt updates and never tears down their Vercel project on
 // delete. Default false = a normally-created agent (full management), so existing

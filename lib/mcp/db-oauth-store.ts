@@ -7,7 +7,7 @@ import type { OAuthStore, OAuthRecord } from "./oauth-store"
 /**
  * Production `OAuthStore` backed by Drizzle. Every read and write is scoped by
  * BOTH the connection id AND the signed-in single-tenant workspace user. Tokens
- * and all OAuth artifacts stay in the database — they never appear in any
+ * and all OAuth artifacts stay in the database; they never appear in any
  * redirect, query string, or response body.
  *
  * This runs inside route handlers, so it does NOT call `revalidatePath`.

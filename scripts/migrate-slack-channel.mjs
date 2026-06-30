@@ -1,6 +1,6 @@
 // Idempotent, additive migration: add the `slackConnectUid` column to the
 // `channels` table. It stores the Vercel Connect connector UID (e.g.
-// "slack/soporte") for a Slack-type channel — the agent's Slack app identity.
+// "slack/soporte") for a Slack-type channel: the agent's Slack app identity.
 // Kapso channels leave it null. The `type` column already exists (default
 // 'kapso') and is the channel discriminator.
 //

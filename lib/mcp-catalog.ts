@@ -30,7 +30,7 @@ export type McpCatalogEntry = {
 
 // Catalog policy: only ONE-CLICK servers. Either auth:"none" (added instantly)
 // or auth:"oauth" (Add → consent redirect). Token/PAT servers are intentionally
-// excluded — they make the user go mint and paste an API key, which isn't
+// excluded: they make the user go mint and paste an API key, which isn't
 // one-click. (GitHub also can't do OAuth here: its auth server lacks Dynamic
 // Client Registration, the only method our connect flow supports.)
 export const MCP_CATALOG: McpCatalogEntry[] = [

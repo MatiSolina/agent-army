@@ -10,7 +10,7 @@ const config = [
       "**/node_modules/**",
       "next-env.d.ts",
       "drizzle/**",
-      // Claude Code worktrees carry their own built .next/node_modules — never
+      // Claude Code worktrees carry their own built .next/node_modules; never
       // lint those (they're third-party/generated, not this project's source).
       ".claude/**",
       ".deepsec/**",

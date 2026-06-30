@@ -77,7 +77,7 @@ function normalizeConnectionInput(input: ConnectionInput): ConnectionInput {
  * sensitive is serialized into the RSC/HTML payload sent to the browser.
  *
  * note: the full-row reader (`getConnections`, with tokens) lives in
- * `lib/mcp/get-connections.ts` — NOT here — so it never becomes a
+ * `lib/mcp/get-connections.ts`, NOT here, so it never becomes a
  * browser-callable server action.
  */
 export async function getConnectionsForClient(): Promise<ClientConnection[]> {
@@ -109,14 +109,14 @@ export async function createConnection(input: ConnectionInput) {
     token: next.token || null,
   })
   revalidatePath("/mcp")
-  // Agent detail pages render the connection list — keep them fresh too.
+  // Agent detail pages render the connection list, so keep them fresh too.
   revalidatePath("/agents/[id]", "page")
   return id
 }
 
 /**
  * Create a connection row for an OAuth MCP catalog entry, ready to start the
- * authorization flow. Does NOT run discovery — the connect route owns the
+ * authorization flow. Does NOT run discovery; the connect route owns the
  * OAuth flow. Returns the new connection id so the caller can navigate to
  * `/api/mcp/<id>/connect`.
  */
@@ -141,7 +141,7 @@ export async function createOAuthConnection(catalogId: string): Promise<string> 
     status: "needs_auth",
   })
   revalidatePath("/mcp")
-  // Agent detail pages render the connection list — keep them fresh too.
+  // Agent detail pages render the connection list, so keep them fresh too.
   revalidatePath("/agents/[id]", "page")
   return id
 }
@@ -158,14 +158,14 @@ export async function updateConnection(id: string, input: ConnectionInput) {
       url: next.url,
       // Only touch the token when the caller provided a value (string to set,
       // or explicit null to clear). `undefined` means "keep the existing
-      // token" — needed because the token is never shipped to the client, so
+      // token", needed because the token is never shipped to the client, so
       // the edit form cannot round-trip it.
       ...(next.token !== undefined ? { token: next.token || null } : {}),
       updatedAt: new Date(),
     })
     .where(and(eq(connections.id, id), eq(connections.userId, userId)))
   revalidatePath("/mcp")
-  // Agent detail pages render the connection list — keep them fresh too.
+  // Agent detail pages render the connection list, so keep them fresh too.
   revalidatePath("/agents/[id]", "page")
 }
 
@@ -175,6 +175,6 @@ export async function deleteConnection(id: string) {
     .delete(connections)
     .where(and(eq(connections.id, id), eq(connections.userId, userId)))
   revalidatePath("/mcp")
-  // Agent detail pages render the connection list — keep them fresh too.
+  // Agent detail pages render the connection list, so keep them fresh too.
   revalidatePath("/agents/[id]", "page")
 }

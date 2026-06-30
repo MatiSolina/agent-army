@@ -103,7 +103,7 @@ describe("DbOAuthClientProvider", () => {
         refresh_token: "rt-2",
       }
       await provider.saveTokens(second)
-      // Wholesale overwrite — no merge of the old refresh token.
+      // Wholesale overwrite, no merge of the old refresh token.
       expect(await provider.tokens()).toEqual(second)
     })
   })
@@ -151,7 +151,7 @@ describe("DbOAuthClientProvider", () => {
     it("state() is deterministic: returns the already-stored state instead of minting a new one", async () => {
       const { provider } = makeProvider()
       await provider.saveState("state-fixed")
-      // A second call to state() must NOT mint a fresh UUID — it must echo the
+      // A second call to state() must NOT mint a fresh UUID; it must echo the
       // stored value so CSRF protection cannot be silently broken by a future
       // SDK that calls state() again at callback time.
       expect(await provider.state()).toBe("state-fixed")

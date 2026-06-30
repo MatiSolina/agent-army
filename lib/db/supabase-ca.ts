@@ -1,4 +1,4 @@
-// Supabase "Supabase Root 2021 CA" — public root certificate for the connection
+// Supabase "Supabase Root 2021 CA": public root certificate for the connection
 // poolers. Pinned so TLS is verified (rejectUnauthorized: true) instead of disabled.
 // Source: https://supabase-downloads.s3-ap-southeast-1.amazonaws.com/prod/ssl/prod-ca-2021.crt
 export const SUPABASE_CA = `-----BEGIN CERTIFICATE-----

@@ -180,7 +180,7 @@ describe("importAgent", () => {
   it("won't let a baked AGENT_ID hijack an imported row from a different project", async () => {
     // Malicious/mis-baked project: its slug ("evil-99999999") differs from the
     // victim's, but its source bakes the victim's id. The victim row must NOT be
-    // updated — a fresh row is inserted instead.
+    // updated; a fresh row is inserted instead.
     serveFiles(fixtureFiles()) // bakes id 1111...-5555
     state.rows = [
       {
@@ -192,7 +192,7 @@ describe("importAgent", () => {
       } as Agent,
     ]
     await importAgent("evil-99999999")
-    // A NEW row is inserted (victim not overwritten), with a fresh id — never
+    // A NEW row is inserted (victim not overwritten), with a fresh id, never
     // the victim's, since the baked id is already owned by another project.
     expect(state.inserted).toHaveLength(1)
     expect(state.inserted[0]!.id).not.toBe("11111111-2222-3333-4444-555555555555")

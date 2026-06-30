@@ -19,7 +19,7 @@ import type { Agent } from "@/lib/db/schema"
 /**
  * Minimal editor for an IMPORTED agent. Imported agents are linked to a Vercel
  * deployment agent-army did NOT create, so the dashboard deliberately exposes
- * ONLY a prompt update — applied live via /api/agents/<id>/runtime-config with NO
+ * ONLY a prompt update, applied live via /api/agents/<id>/runtime-config with NO
  * rebuild. Every full-management surface (Capabilities, Channels, Secrets,
  * Deployments, Deploy, Test) is intentionally absent so the dashboard can never
  * regenerate or tear down a working deployment. Everything else (connections,

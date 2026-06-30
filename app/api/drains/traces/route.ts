@@ -18,7 +18,7 @@ export const dynamic = "force-dynamic"
  *
  * Every deployed agent emits @vercel/otel spans (see lib/eve/generate.ts
  * `emitInstrumentation`); Vercel forwards them here. Auth is the drain's HMAC
- * signature (no operator session) — so /api/drains is exempt from the auth gate
+ * signature (no operator session), so /api/drains is exempt from the auth gate
  * in lib/supabase/middleware.ts, mirroring /api/mcp/token.
  *
  * note: JSON format only (protobuf would need a decoder dep); set the drain
@@ -28,7 +28,7 @@ export const dynamic = "force-dynamic"
 export async function POST(req: NextRequest) {
   const secret = process.env.VERCEL_DRAIN_SECRET
   if (!secret) {
-    // Misconfigured FM — fail loud rather than silently accepting unsigned data.
+    // Misconfigured FM: fail loud rather than silently accepting unsigned data.
     return new Response("drain secret not configured", { status: 500 })
   }
 
@@ -48,7 +48,7 @@ export async function POST(req: NextRequest) {
   }
 
   const agentSpans = parseTraceExport(payload).map(toAgentSpan)
-  // Vercel pings the endpoint with an empty/test body on creation — accept it.
+  // Vercel pings the endpoint with an empty/test body on creation; accept it.
   if (agentSpans.length === 0) return Response.json({ ok: true, ingested: 0 })
 
   const userId = await getUserId()

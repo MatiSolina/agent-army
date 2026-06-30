@@ -9,7 +9,7 @@ export type Model = { id: string; label: string; provider: string }
 
 // Default is Haiku 4.5: empirically the cleanest model on Vercel's free AI tier
 // (consistently usable, not even rate-limited). note: we deliberately do NOT
-// flag/block individual models for the free tier — probing showed the gateway's
+// flag/block individual models for the free tier: probing showed the gateway's
 // "no access" vs "rate-limited" verdict is unstable per model (only Sonnet 4.6
 // was consistently hard-blocked), so a static blocklist would just rot. The
 // picker collapses the long list on the free tier; the runtime error explains
@@ -43,7 +43,7 @@ export function filterModels(models: Model[], query: string): Model[] {
  * Only language models are kept (the gateway also returns embedding/image/video/
  * reranking models, which an agent can't use). Inputs with no `modelType` are
  * kept so the mapper stays usable on bare {id,name} fixtures.
- * Pure — kept here (not in the "use server" action) so it can be unit-tested
+ * Pure: kept here (not in the "use server" action) so it can be unit-tested
  * and reused. Sorted by provider then label.
  */
 export function mapGatewayModels(

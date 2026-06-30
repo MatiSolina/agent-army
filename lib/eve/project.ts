@@ -2,18 +2,18 @@ import type { Agent, Connection } from "@/lib/db/schema"
 import { buildEveAgent, type ChannelEmit } from "./generate"
 
 /**
- * Stage 2 — deployable Eve PROJECT generator (PURE).
+ * Stage 2: deployable Eve PROJECT generator (PURE).
  *
  * `buildEveProject` wraps {@link buildEveAgent} (which emits the `agent/...`
- * authored surface) and adds the project scaffold around it — `package.json`,
- * `tsconfig.json`, and a hygiene `.gitignore` — so the result is a complete,
+ * authored surface) and adds the project scaffold around it (`package.json`,
+ * `tsconfig.json`, and a hygiene `.gitignore`) so the result is a complete,
  * deployable Eve app rooted at a single directory.
  *
  * It performs NO I/O. Callers materialise the returned `{ path: contents }` map
  * to disk (see `materialize.ts`) and then deploy it with the Vercel CLI.
  *
  * CAVEAT: this runs under Node 22; Eve itself requires Node 24. We never build
- * or run Eve here — the actual `eve build` happens REMOTELY on Vercel's Node 24
+ * or run Eve here; the actual `eve build` happens REMOTELY on Vercel's Node 24
  * builder during `vercel deploy`. Correctness is validated against the Eve docs
  * (`/Users/mati/.claude/skills/eve/docs`, esp. getting-started + deployment) and
  * structural unit tests, not by compiling Eve.
@@ -33,7 +33,7 @@ export const EVE_VERSION = "0.16.0"
  * vite, …) are marked optional, so we do not declare them.
  *
  * NOTE: 0.16.0 is the version the agent generator (channels, connections) is
- * authored against — the local Eve docs. The custom-channel mount path
+ * authored against, per the local Eve docs. The custom-channel mount path
  * (/eve/v1/<stem>) and `defineChannel` API in this generator require >= 0.16.
  */
 export const EVE_AI_VERSION = "7.0.3"
@@ -46,7 +46,7 @@ export const EVE_ZOD_VERSION = "^3.25.76"
 /**
  * `@vercel/otel` version, added to deps ONLY when a generated file imports it.
  * `agent/instrumentation.ts` (always emitted) imports `@vercel/otel`, so in
- * practice this dep is always present — but the guard keeps the generator free
+ * practice this dep is always present, but the guard keeps the generator free
  * of dead deps (dep present iff a file actually references it). Matches the
  * dashboard's own `@vercel/otel` pin. Exact, not a caret, for reproducible
  * deploys (mirrors EVE_CONNECT_VERSION).
@@ -55,7 +55,7 @@ export const EVE_OTEL_VERSION = "2.1.3"
 
 /**
  * `@vercel/connect` version, added to deps ONLY when a generated connection
- * uses Vercel Connect (`connect()` from `@vercel/connect/eve` — see
+ * uses Vercel Connect (`connect()` from `@vercel/connect/eve`; see
  * generate.ts `emitConnection` "connect" branch). Exact pin, not a caret, for
  * reproducible deploys (mirrors EVE_OTEL_VERSION).
  */
@@ -71,7 +71,7 @@ export const EVE_CONNECT_VERSION = "0.2.10"
  * The result matches `^[a-z0-9][a-z0-9-]{0,99}$` and contains only characters
  * that are safe both as a Vercel project name AND as a single argv element. It
  * is only ever passed inside a spawn() args array (shell:false), so even a
- * bypass could not inject shell metacharacters — this is defence in depth.
+ * bypass could not inject shell metacharacters; this is defence in depth.
  */
 export function projectName(agent: Agent): string {
   const idSuffix =
@@ -110,7 +110,7 @@ export function buildEveProject(
 
   const dependencies: Record<string, string> = {
     eve: opts.eveVersion ?? EVE_VERSION,
-    // Exact pin — must match eve's non-optional `ai` peer or remote
+    // Exact pin: must match eve's non-optional `ai` peer or remote
     // `npm install` fails with ERESOLVE. See EVE_AI_VERSION.
     ai: opts.aiVersion ?? EVE_AI_VERSION,
     zod: EVE_ZOD_VERSION,
@@ -167,7 +167,7 @@ export function buildEveProject(
       2,
     ) + "\n"
 
-  // Hygiene only — the deploy directory itself is git-ignored at the repo root
+  // Hygiene only; the deploy directory itself is git-ignored at the repo root
   // (.eve-deploy/). No `vercel.json`: `eve build` emits its own Vercel Build
   // Output and wires Vercel Cron automatically; a vercel.json could override
   // buildCommand/outputDirectory incorrectly.

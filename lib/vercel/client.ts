@@ -1,6 +1,6 @@
 /**
- * Vercel REST API client — fetch orchestration with injectable fetch for tests.
- * No React/Next imports. No env reads — caller passes token/teamId via cfg.
+ * Vercel REST API client: fetch orchestration with injectable fetch for tests.
+ * No React/Next imports. No env reads; caller passes token/teamId via cfg.
  */
 
 import {
@@ -71,10 +71,10 @@ export async function createDeployment(
   // yet (autoAssignCustomDomains:false). The non-technical user tests this
   // build's own unique URL via the web chat, then promoteDeployment() flips the
   // production domain to it. A plain PREVIEW deploy (no target) CANNOT be
-  // promoted — `/v10/.../promote` rejects it with 422, so the whole "test then
+  // promoted: `/v10/.../promote` rejects it with 422, so the whole "test then
   // publish" flow only works if the build targets production from the start.
   // NOTE: no inline `env`. Secrets live on the project (upsertProjectEnv),
-  // and the deployment inherits them — per-deployment inline env is superseded.
+  // and the deployment inherits them; per-deployment inline env is superseded.
   const body = {
     name: args.name,
     project: args.name,
@@ -145,7 +145,7 @@ export async function getBuildErrorText(
 }
 
 // ---------------------------------------------------------------------------
-// getBuildEvents — ordered live build log tail (for the redeploy modal)
+// getBuildEvents: ordered live build log tail (for the redeploy modal)
 // ---------------------------------------------------------------------------
 
 /**
@@ -173,7 +173,7 @@ export async function getBuildEvents(
 }
 
 // ---------------------------------------------------------------------------
-// getReadyState — single-shot, no loop
+// getReadyState: single-shot, no loop
 // ---------------------------------------------------------------------------
 
 /**
@@ -245,7 +245,7 @@ export async function pollUntilReady(
 }
 
 // ---------------------------------------------------------------------------
-// ensureProject — GET-then-create, idempotent + race-safe
+// ensureProject: GET-then-create, idempotent + race-safe
 // ---------------------------------------------------------------------------
 
 /**
@@ -253,7 +253,7 @@ export async function pollUntilReady(
  * can target it. GET /v9/projects/{name}: 200 → already exists; 404 → create
  * via POST /v11/projects {name}. A name-collision error on POST (lost race with
  * a concurrent create) is treated as success. We do NOT send a `framework` on
- * create — the framework ("eve") is supplied per-deployment in createDeployment,
+ * create: the framework ("eve") is supplied per-deployment in createDeployment,
  * and an unexpected framework value would 400 here.
  *
  * SECURITY: the token is never included in any thrown error.
@@ -301,7 +301,7 @@ export async function ensureProject(
 }
 
 // ---------------------------------------------------------------------------
-// attachConnectorToProject — grant a project access to a Vercel Connect connector
+// attachConnectorToProject: grant a project access to a Vercel Connect connector
 // ---------------------------------------------------------------------------
 
 /**
@@ -362,7 +362,7 @@ export async function attachConnectorToProject(
 }
 
 // ---------------------------------------------------------------------------
-// listConnectors — enumerate the team's Vercel Connect connectors
+// listConnectors: enumerate the team's Vercel Connect connectors
 // ---------------------------------------------------------------------------
 
 export type ConnectorSummary = {
@@ -403,7 +403,7 @@ export async function listConnectors(
 }
 
 // ---------------------------------------------------------------------------
-// attachTriggerDestination — route a connector's inbound triggers to a project
+// attachTriggerDestination: route a connector's inbound triggers to a project
 // ---------------------------------------------------------------------------
 
 /**
@@ -466,7 +466,7 @@ export async function attachTriggerDestination(
 }
 
 // ---------------------------------------------------------------------------
-// deleteProject — tear down the project and all its deployments/domains/env
+// deleteProject: tear down the project and all its deployments/domains/env
 // ---------------------------------------------------------------------------
 
 /**
@@ -498,13 +498,13 @@ export async function deleteProject(
 }
 
 // ---------------------------------------------------------------------------
-// deleteDeployment — tear down a SINGLE deployment (preview-test housekeeping)
+// deleteDeployment: tear down a SINGLE deployment (preview-test housekeeping)
 // ---------------------------------------------------------------------------
 
 /**
  * Delete a single Vercel deployment by id (NOT the whole project). DELETE
  * /v13/deployments/{id}. Used by the gated-eve-bump preview-test failure path so
- * a never-promoted pinned preview does not linger and consume quota — the
+ * a never-promoted pinned preview does not linger and consume quota; the
  * project (and its prod deployment) must survive. Idempotent: a 404 (already
  * gone) is treated as success → returns existed:false. Any other non-OK throws.
  *
@@ -532,7 +532,7 @@ export async function deleteDeployment(
 }
 
 // ---------------------------------------------------------------------------
-// upsertProjectEnv — persist encrypted env vars onto the project
+// upsertProjectEnv: persist encrypted env vars onto the project
 // ---------------------------------------------------------------------------
 
 /**
@@ -543,7 +543,7 @@ export async function deleteDeployment(
  * No-op when `specs` is empty (no request issued).
  *
  * SECURITY: secret VALUES are sent in the request body but NEVER appear in any
- * thrown error — only HTTP status text (capped) and offending KEYS surface.
+ * thrown error: only HTTP status text (capped) and offending KEYS surface.
  */
 export async function upsertProjectEnv(
   cfg: VercelClientConfig,
@@ -581,7 +581,7 @@ export async function upsertProjectEnv(
       ? (json as Record<string, unknown>).failed
       : undefined
   if (Array.isArray(failed) && failed.length > 0) {
-    // Surface offending KEYS only — never the values.
+    // Surface offending KEYS only, never the values.
     const keys = failed
       .map((f) => {
         if (!f || typeof f !== "object") return undefined
@@ -601,12 +601,12 @@ export async function upsertProjectEnv(
 }
 
 // ---------------------------------------------------------------------------
-// listProjectEnvKeys — masked key listing for "configured" badges
+// listProjectEnvKeys: masked key listing for "configured" badges
 // ---------------------------------------------------------------------------
 
 /**
  * List the env vars on the project, returning KEYS ONLY (key/target/type).
- * `decrypt` is never set, so the API returns masked values — and we drop the
+ * `decrypt` is never set, so the API returns masked values, and we drop the
  * value field entirely via parseEnvKeysResponse regardless. A 404 (project not
  * created yet) yields `[]`.
  */
@@ -633,7 +633,7 @@ export async function listProjectEnvKeys(
 }
 
 // ---------------------------------------------------------------------------
-// promoteDeployment — promote/rollback a built deploy to production
+// promoteDeployment: promote/rollback a built deploy to production
 // ---------------------------------------------------------------------------
 
 /**
@@ -667,7 +667,7 @@ export async function resolveProjectId(
 /**
  * Promote an already-built deployment to production with NO rebuild (Vercel's
  * native primitive). This is both "promote a preview" and "rollback to an older
- * deployment" — rollback is just promoting an earlier one. POST /v10/projects/
+ * deployment": rollback is just promoting an earlier one. POST /v10/projects/
  * {projectName}/promote/{deploymentId} with an empty body.
  *
  * Path segments are encodeURIComponent-escaped so a slug/id with reserved chars
@@ -679,7 +679,7 @@ export async function promoteDeployment(
   deploymentId: string,
 ): Promise<void> {
   const fetchImpl = cfg.fetchImpl ?? fetch
-  // The promote endpoint resolves the project by ID ONLY — passing the name
+  // The promote endpoint resolves the project by ID ONLY; passing the name
   // 404s ("Project not found") even though /v9/projects/{name} accepts it.
   const projectId = await resolveProjectId(cfg, projectName)
   const url = apiUrl(
@@ -700,7 +700,7 @@ export async function promoteDeployment(
 }
 
 // ---------------------------------------------------------------------------
-// listDeployments — past deployments for the Deployments tab
+// listDeployments: past deployments for the Deployments tab
 // ---------------------------------------------------------------------------
 
 /**
@@ -736,7 +736,7 @@ export async function listDeployments(
 }
 
 // ---------------------------------------------------------------------------
-// getProductionDeploymentId — the deployment currently live on prod
+// getProductionDeploymentId: the deployment currently live on prod
 // ---------------------------------------------------------------------------
 
 /**
@@ -769,11 +769,11 @@ export async function getProductionDeploymentId(
 }
 
 // ---------------------------------------------------------------------------
-// listProjects — enumerate the team's projects (for the import picker)
+// listProjects: enumerate the team's projects (for the import picker)
 // ---------------------------------------------------------------------------
 
 /**
- * List the team's Vercel projects. GET /v10/projects (the LIST endpoint — note
+ * List the team's Vercel projects. GET /v10/projects (the LIST endpoint; note
  * single-project reads use /v9/projects/{name}). Each entry carries its current
  * production deployment id (targets.production.id), so the import picker resolves
  * every candidate's prod deployment in this one call. `from` is the pagination
@@ -804,7 +804,7 @@ export async function listProjects(
 }
 
 // ---------------------------------------------------------------------------
-// getDeploymentFileTree — the deployment's source file tree (flattened)
+// getDeploymentFileTree: the deployment's source file tree (flattened)
 // ---------------------------------------------------------------------------
 
 /**
@@ -837,12 +837,12 @@ export async function getDeploymentFileTree(
 }
 
 // ---------------------------------------------------------------------------
-// getDeploymentFile — a single source file's decoded text contents
+// getDeploymentFile: a single source file's decoded text contents
 // ---------------------------------------------------------------------------
 
 /**
  * Read a single deployment source file's text by its tree `uid`. GET
- * /v8/deployments/{id}/files/{fileId} (version /v8 — a wrong version 410s). The
+ * /v8/deployments/{id}/files/{fileId} (version /v8; a wrong version 410s). The
  * body is normalized by decodeDeploymentFileBody (verified shape: {data:base64}).
  * Both path segments are encodeURIComponent-escaped.
  *

@@ -1,7 +1,7 @@
 import { beforeEach, describe, expect, it, vi } from "vitest"
 
 // ---------------------------------------------------------------------------
-// Mocks — no real deploy, no real Vercel, no real ping.
+// Mocks: no real deploy, no real Vercel, no real ping.
 // ---------------------------------------------------------------------------
 
 // Capture the db.update().set(...) payloads so we can assert verdict writes.
@@ -28,7 +28,7 @@ vi.mock("@/lib/eve/eve-version", () => ({
     target: "0.16.0",
     // The pinned-back target's ai peer (old). The preview-test must NOT use this.
     aiPin: "^7.2.0",
-    // The CANDIDATE's ai peer — what the preview pinned to 0.17.0 must carry.
+    // The CANDIDATE's ai peer: what the preview pinned to 0.17.0 must carry.
     latestAiPin: "^8.0.0",
     gated: true,
   })),
@@ -120,7 +120,7 @@ describe("testEvePreview — failure path", () => {
     // Returns null + the error string for the handoff prompt.
     expect(out.verdictUrl).toBeNull()
     expect(out.error).toContain("500")
-    // The verdict write touches ONLY the verdict columns — it never rewrites
+    // The verdict write touches ONLY the verdict columns; it never rewrites
     // deploymentStatus / eveVersion / previewUrl, because previewTest mode never
     // corrupted the live row in the first place (no fix-up needed).
     expect(verdict).not.toHaveProperty("deploymentStatus")

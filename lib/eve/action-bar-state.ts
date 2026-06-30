@@ -2,13 +2,13 @@
 // banners. The insight: a button can *carry its own state*. Save reflects the
 // diff between the editor and the saved definition; Deploy reflects the diff
 // between the saved definition and the live build. `attention` (an amber dot +
-// a count) replaces the "you have undeployed build changes" warning banner —
+// a count) replaces the "you have undeployed build changes" warning banner:
 // the alert lives on the button that resolves it.
 
 type ButtonState = { label: string; disabled: boolean; attention: boolean }
 
 // The header status pill. `enabled` ("Agent active") is a config preference that
-// only means something once the agent actually lives in production — a freshly
+// only means something once the agent actually lives in production. A freshly
 // created, never-deployed agent is a Draft, not "Active". Live/Active is gated
 // on a real deployment first, the toggle second.
 //

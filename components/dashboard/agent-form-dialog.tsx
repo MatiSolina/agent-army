@@ -50,7 +50,7 @@ export function AgentFormDialog({
   }
 
   // Land the user in the editor with whatever was just created. `build` adds a
-  // ?building=1 flag the editor consumes once to kick off a preview build —
+  // ?building=1 flag the editor consumes once to kick off a preview build;
   // template agents deploy with zero extra config, so we build immediately.
   const create = async (
     run: () => Promise<string>,

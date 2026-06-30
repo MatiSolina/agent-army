@@ -115,7 +115,7 @@ export function ChannelFormDialog({
   // Auto-discover numbers when editing a Kapso channel that already has a stored
   // key, so the Phone Number renders as a labelled picker (current number
   // preselected) instead of the raw phone_number_id. Uses the stored key via
-  // channelId — the secret never reaches the browser.
+  // channelId; the secret never reaches the browser.
   useEffect(() => {
     if (!(open && isKapso && channel?.id && channel.hasKapsoApiKey)) return
     let active = true
@@ -139,7 +139,7 @@ export function ChannelFormDialog({
   }, [open, isKapso, channel?.id, channel?.hasKapsoApiKey])
 
   // Create flow: auto-discover numbers shortly after the API key is pasted, so
-  // the picker appears on its own — no manual "Find my numbers" click and no
+  // the picker appears on its own, with no manual "Find my numbers" click and no
   // editable phone-number textbox. Debounced to coalesce paste/typing.
   useEffect(() => {
     if (editing || !isKapso) return
@@ -228,7 +228,7 @@ export function ChannelFormDialog({
     try {
       // Secret fields (API key, webhook secret) are never pre-filled on edit so
       // the plaintext is not serialized to the client. A blank field in edit
-      // mode therefore means "leave unchanged" — send `undefined` so the server
+      // mode therefore means "leave unchanged": send `undefined` so the server
       // preserves the stored value instead of clearing it. Non-secret fields are
       // always sent as-is.
       const apiKeyTrimmed = apiKey.trim()
@@ -251,7 +251,7 @@ export function ChannelFormDialog({
               agentId: agentId === NONE ? null : agentId,
               telegramBotToken:
                 editing && !tgBotTokenTrimmed ? undefined : tgBotTokenTrimmed,
-              // Blank on create is fine — the server auto-generates the secret.
+              // Blank on create is fine; the server auto-generates the secret.
               telegramWebhookSecretToken:
                 editing && !tgWebhookSecretTrimmed
                   ? undefined
@@ -280,7 +280,7 @@ export function ChannelFormDialog({
             kapsoPhoneNumberId: phoneNumberId.trim(),
             kapsoPhoneNumber: phoneNumber.trim() || null,
             // The webhook secret is auto-minted server-side on create and
-            // auto-registered with Kapso on promote — never entered here.
+            // auto-registered with Kapso on promote, never entered here.
           }
       const assignedAgentId = agentId === NONE ? null : agentId
       let savedChannelId: string
@@ -292,7 +292,7 @@ export function ChannelFormDialog({
         savedChannelId = await createChannel(payload)
         toast.success("Channel created")
       }
-      // Assigning an agent triggers a background (re)deploy — tell the parent so
+      // Assigning an agent triggers a background (re)deploy. Tell the parent so
       // the row shows the build immediately (the agent's stored status is stale).
       if (assignedAgentId) onSaved?.(savedChannelId, assignedAgentId)
       onOpenChange(false)
@@ -615,7 +615,7 @@ export function ChannelFormDialog({
                     {discovering ? "Finding…" : "Find my numbers"}
                   </Button>
                 </div>
-                {/* The number is ALWAYS a picker — never an editable textbox. The
+                {/* The number is ALWAYS a picker, never an editable textbox. The
                     list shows up once the API key is pasted (auto-discovered) or
                     via "Find my numbers"; before that, a disabled hint. */}
                 {kapsoNumbers.length > 0 ? (

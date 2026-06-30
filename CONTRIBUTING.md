@@ -30,7 +30,7 @@ Requires Node 22+ and pnpm. See [`.env.example`](./.env.example) for required en
 - **English only** in code, UI, comments.
 - Dark-only UI, Midday aesthetic.
 - Generators that emit code must escape interpolated values (no injection).
-- DB migrations are additive, idempotent scripts — no destructive drops without a deliberate migration.
+- DB migrations are additive, idempotent scripts. No destructive drops without a deliberate migration.
 - Never commit secrets. `.env*.local` is gitignored; use `.env.example` for new keys.
 
 ## License

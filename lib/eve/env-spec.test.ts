@@ -108,7 +108,7 @@ describe("connectionTokenEnvKey", () => {
 })
 
 // ---------------------------------------------------------------------------
-// buildAgentEnvSpec — connection tokens
+// buildAgentEnvSpec: connection tokens
 // ---------------------------------------------------------------------------
 describe("buildAgentEnvSpec — connection tokens", () => {
   it("emits <SLUG>_TOKEN for an assigned, non-stdio, token connection", () => {
@@ -172,7 +172,7 @@ describe("buildAgentEnvSpec — connection tokens", () => {
 })
 
 // ---------------------------------------------------------------------------
-// buildAgentEnvSpec — FM token broker base URL
+// buildAgentEnvSpec: FM token broker base URL
 // ---------------------------------------------------------------------------
 describe("buildAgentEnvSpec — FM_BASE_URL", () => {
   it("emits FM_BASE_URL when fmBaseUrl is provided", () => {
@@ -202,7 +202,7 @@ describe("buildAgentEnvSpec — FM_BASE_URL", () => {
 })
 
 // ---------------------------------------------------------------------------
-// buildAgentEnvSpec — Kapso channel
+// buildAgentEnvSpec: Kapso channel
 // ---------------------------------------------------------------------------
 describe("buildAgentEnvSpec — Kapso channel", () => {
   it("folds the assigned channel's Kapso creds into the spec", () => {
@@ -259,7 +259,7 @@ describe("buildAgentEnvSpec — Kapso channel", () => {
       agent,
       connections: [],
       // Defensive: even if kapso fields were somehow set, type='slack' must
-      // never push KAPSO_* — a Slack agent gets its creds from Vercel Connect.
+      // never push KAPSO_*; a Slack agent gets its creds from Vercel Connect.
       channel: {
         type: "slack",
         kapsoApiKey: "leak",
@@ -272,7 +272,7 @@ describe("buildAgentEnvSpec — Kapso channel", () => {
 })
 
 // ---------------------------------------------------------------------------
-// buildAgentEnvSpec — Telegram channel
+// buildAgentEnvSpec: Telegram channel
 // ---------------------------------------------------------------------------
 describe("buildAgentEnvSpec — Telegram channel", () => {
   it("pushes both TELEGRAM_* vars for a telegram channel", () => {
@@ -332,7 +332,7 @@ describe("buildAgentEnvSpec — Telegram channel", () => {
 })
 
 // ---------------------------------------------------------------------------
-// buildAgentEnvSpec — Discord channel
+// buildAgentEnvSpec: Discord channel
 // ---------------------------------------------------------------------------
 describe("buildAgentEnvSpec — Discord channel", () => {
   it("pushes all three DISCORD_* vars for a discord channel", () => {
@@ -394,7 +394,7 @@ describe("buildAgentEnvSpec — Discord channel", () => {
 })
 
 // ---------------------------------------------------------------------------
-// expectedEnvKeys — the keys the Secrets tab should render as configurable
+// expectedEnvKeys: the keys the Secrets tab should render as configurable
 // ---------------------------------------------------------------------------
 describe("expectedEnvKeys", () => {
   it("returns exactly the two TELEGRAM_* keys for a telegram channel", () => {
@@ -492,7 +492,7 @@ describe("expectedEnvKeys", () => {
 })
 
 // ---------------------------------------------------------------------------
-// buildAgentEnvSpec — combined + de-dup
+// buildAgentEnvSpec: combined + de-dup
 // ---------------------------------------------------------------------------
 describe("buildAgentEnvSpec — combined", () => {
   it("includes both connection tokens and Kapso vars together", () => {

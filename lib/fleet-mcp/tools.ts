@@ -145,7 +145,7 @@ export async function runAuditedFleetTool<T>(
     }).catch(() => {})
     throw error
   }
-  // Primary op already succeeded — a failed audit write must NOT turn a completed
+  // Primary op already succeeded; a failed audit write must NOT turn a completed
   // action into a thrown error, so swallow audit errors here.
   await writeAuditLog({
     ...baseAudit,

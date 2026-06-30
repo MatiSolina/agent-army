@@ -3,7 +3,7 @@ import { isPublic } from "./middleware"
 
 // The operator-session gate must NOT trap machine-to-machine endpoints that
 // carry their own bearer auth. /api/mcp/token is the FM token broker the
-// DEPLOYED eve agents call with EVE_API_SECRET — if the middleware redirects it
+// DEPLOYED eve agents call with EVE_API_SECRET. If the middleware redirects it
 // to /sign-in, every OAuth MCP tool (e.g. Linear) fails at runtime because the
 // agent gets the login page instead of the access token.
 describe("isPublic", () => {

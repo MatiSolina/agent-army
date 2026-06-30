@@ -16,7 +16,7 @@ export const APP_CLIENT_NAME = "Agent Army"
  * `OAuthClientProvider`. It is intentionally pure: all persistence goes
  * through the store, and signed-in workspace scoping lives in the store.
  *
- * Server-side only. The provider never navigates the browser — when the SDK
+ * Server-side only. The provider never navigates the browser: when the SDK
  * wants a redirect, `redirectToAuthorization` stashes the URL so the calling
  * route handler can issue the HTTP 302 itself.
  */

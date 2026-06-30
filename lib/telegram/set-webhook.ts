@@ -4,7 +4,7 @@
  * eve itself never calls setWebhook (it only verifies the inbound
  * X-Telegram-Bot-Api-Secret-Token header), so the control plane registers the
  * deployed prod URL on promote. setWebhook fully REPLACES any prior webhook on
- * each call, so it is idempotent — safe to re-run on every promote with no
+ * each call, so it is idempotent: safe to re-run on every promote with no
  * retries needed. We do NOT set drop_pending_updates, so a re-run never
  * silently discards queued updates.
  *

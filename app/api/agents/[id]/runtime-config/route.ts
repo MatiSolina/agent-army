@@ -17,7 +17,7 @@ export const dynamic = "force-dynamic"
  * There is no operator session here: generated Eve runtimes call this from
  * dynamic instructions to refresh prompt text without rebuilding the Vercel
  * deployment. Auth is the PER-AGENT token HMAC(FM_AGENT_KEY, <route id>), so a
- * token only authorizes its own agent — a token for A cannot read agent B.
+ * token only authorizes its own agent: a token for A cannot read agent B.
  */
 export async function GET(
   req: NextRequest,
@@ -26,7 +26,7 @@ export async function GET(
   const token = extractBearerToken(req.headers.get("authorization"))
   const { id } = await params
 
-  // Per-agent credential bound to THIS route id — the ONLY accepted credential.
+  // Per-agent credential bound to THIS route id: the ONLY accepted credential.
   if (!verifyAgentToken(id, token, process.env.FM_AGENT_KEY)) {
     return new Response(null, { status: 401 })
   }

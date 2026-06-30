@@ -59,8 +59,8 @@ function normalizeUrl(url: string) {
 
 // Set of normalized catalog URLs whose auth method is OAuth, so we can tell
 // which installed connections expose the Connect/Reconnect flow. Excludes
-// Vercel-Connect-backed entries (e.g. Slack): they have no add-time DCR flow —
-// consent happens at runtime via Vercel Connect — so they must NOT show the
+// Vercel-Connect-backed entries (e.g. Slack): they have no add-time DCR flow
+// (consent happens at runtime via Vercel Connect), so they must NOT show the
 // (broken) Connect button that points at /api/mcp/<id>/connect.
 const OAUTH_CATALOG_URLS = new Set(
   MCP_CATALOG.filter((e) => e.auth === "oauth" && !e.vercelConnect).map((e) =>
@@ -581,7 +581,7 @@ export function McpView({
     [initialConnections],
   )
 
-  // Connections that don't match any catalog entry — these still need their own
+  // Connections that don't match any catalog entry; these still need their own
   // section (the catalog can't render them).
   const customConnections = useMemo(() => {
     const catalogUrls = new Set(MCP_CATALOG.map((e) => normalizeUrl(e.url)))

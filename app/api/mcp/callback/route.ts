@@ -123,7 +123,7 @@ export async function GET(req: NextRequest) {
       new URL(`/mcp?connected=1&cid=${encodeURIComponent(cid)}`, origin),
     )
   } catch (err) {
-    // Log ONLY the error class — not err.message, which (via @ai-sdk/mcp's
+    // Log ONLY the error class, not err.message, which (via @ai-sdk/mcp's
     // parseErrorResponse) can carry the authorization server's response body.
     // Persist a generic message so we never echo an upstream response either.
     const cls = err instanceof Error ? err.name : "Error"

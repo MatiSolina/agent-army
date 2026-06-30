@@ -1,6 +1,6 @@
 /**
  * Pure, unit-testable helpers for the Vercel REST API deployer.
- * No I/O, no fetch, no env reads — only data transformations.
+ * No I/O, no fetch, no env reads: only data transformations.
  */
 
 // ---------------------------------------------------------------------------
@@ -40,7 +40,7 @@ export function parseDeploymentResponse(json: unknown): {
   const url =
     rawUrl === "" || rawUrl.startsWith("http") ? rawUrl : `https://${rawUrl}`
   // v13 deployment responses carry the owning project id, distinct from the
-  // deployment id — persist THAT so it matches OTel spans' vercel.projectId.
+  // deployment id, so persist THAT so it matches OTel spans' vercel.projectId.
   const projectId = typeof obj.projectId === "string" ? obj.projectId : null
   return { id: obj.id, url, readyState: obj.readyState, projectId }
 }
@@ -83,7 +83,7 @@ export function extractBuildErrorText(events: unknown): string {
 }
 
 // ---------------------------------------------------------------------------
-// extractBuildLogLines — ordered, human-readable build log tail
+// extractBuildLogLines: ordered, human-readable build log tail
 // ---------------------------------------------------------------------------
 
 const MAX_LOG_LINES = 200
@@ -111,7 +111,7 @@ export function extractBuildLogLines(events: unknown): string[] {
 }
 
 // ---------------------------------------------------------------------------
-// summarizeDeployProgress — classify the newest deployment into a UI phase
+// summarizeDeployProgress: classify the newest deployment into a UI phase
 // ---------------------------------------------------------------------------
 
 export type DeployPhase = "preparing" | "building" | "ready" | "error"
@@ -132,7 +132,7 @@ export type DeployProgress = {
  * PRIOR build, not this one, so until a newer deployment registers we report
  * "preparing" with a null id (the create call hasn't landed on Vercel yet).
  * QUEUED/INITIALIZING also map to "preparing" but DO expose the id (the build
- * exists, just hasn't started compiling). Pure — no I/O.
+ * exists, just hasn't started compiling). Pure: no I/O.
  */
 export function summarizeDeployProgress(
   deployments: ReturnType<typeof parseDeploymentsList>,
@@ -172,7 +172,7 @@ export function summarizeDeployProgress(
  * Parse the Vercel "list project env" response into a keys-only view.
  *
  * Accepts either `{ envs: [...] }` or a bare array. For each entry we surface
- * ONLY `{ key, target, type }` — the `value` field (masked when `decrypt` is
+ * ONLY `{ key, target, type }`; the `value` field (masked when `decrypt` is
  * unset, but still server-side data) is deliberately dropped so a secret value
  * can never travel further than the Vercel API boundary. Unexpected input
  * yields `[]` (defensive: never throws on shape).
@@ -277,7 +277,7 @@ export function parseProductionDeploymentId(json: unknown): string | null {
 }
 
 // ---------------------------------------------------------------------------
-// parseProjectsList — list the team's projects (for the import picker)
+// parseProjectsList: list the team's projects (for the import picker)
 // ---------------------------------------------------------------------------
 
 function isRecord(v: unknown): v is Record<string, unknown> {
@@ -332,7 +332,7 @@ export function parseProjectsList(json: unknown): {
 }
 
 // ---------------------------------------------------------------------------
-// flattenDeploymentFiles — recursive source tree → flat {path, uid} list
+// flattenDeploymentFiles: recursive source tree → flat {path, uid} list
 // ---------------------------------------------------------------------------
 
 export type DeploymentFileEntry = { path: string; uid: string }
@@ -342,7 +342,7 @@ export type DeploymentFileEntry = { path: string; uid: string }
  * SOURCE files only. Each node is `{ name, type, uid?, children? }`; directories
  * carry `children` (recurse, joining `name` segments with "/"), files carry a
  * `uid` (the fileId for the contents endpoint). Build-output artifacts come back
- * as `type:"lambda"|"middleware"` (no readable uid) — only `type:"file"` leaves
+ * as `type:"lambda"|"middleware"` (no readable uid); only `type:"file"` leaves
  * are kept. Tolerates a bare array OR `{ files: [...] }` at the top.
  */
 export function flattenDeploymentFiles(json: unknown): DeploymentFileEntry[] {
@@ -369,7 +369,7 @@ export function flattenDeploymentFiles(json: unknown): DeploymentFileEntry[] {
 }
 
 // ---------------------------------------------------------------------------
-// decodeDeploymentFileBody — normalize the file-contents response to text
+// decodeDeploymentFileBody: normalize the file-contents response to text
 // ---------------------------------------------------------------------------
 
 /**
@@ -393,7 +393,7 @@ export function decodeDeploymentFileBody(raw: string): string {
       candidate = parsed
     }
   } catch {
-    // Not JSON — the raw body is the file text (or bare base64, handled below).
+    // Not JSON: the raw body is the file text (or bare base64, handled below).
   }
   const compact = candidate.replace(/\s/g, "")
   if (

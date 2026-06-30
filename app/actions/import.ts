@@ -39,7 +39,7 @@ export type DiscoverableProject = {
  * for the import picker. Each is flagged `alreadyImported` (an agents row whose
  * deterministic projectName matches) and `hasProduction` (has a promoted prod
  * deployment to read source from). Degrades to `{projects:[]}` on any Vercel
- * error — matches getAgentDeployments' fail-soft contract.
+ * error, matching getAgentDeployments' fail-soft contract.
  */
 export async function discoverDeployedAgents(): Promise<{
   projects: DiscoverableProject[]
@@ -75,7 +75,7 @@ export async function discoverDeployedAgents(): Promise<{
  * read its production deployment's source files, reverse-parse them
  * (discoverEveAgent), and INSERT (or UPDATE on re-import) an agents row.
  *
- * Lossy by design — secrets (connection tokens, channel creds, AI gateway key),
+ * Lossy by design: secrets (connection tokens, channel creds, AI gateway key),
  * temperature and maxSteps live only in the deployment's encrypted env and are
  * NOT recovered; they default and are flagged in `warnings`. The live bot keeps
  * running on its existing env; a dashboard re-Deploy needs the secrets re-entered.
@@ -99,8 +99,8 @@ export async function importAgent(slug: string): Promise<{
   if (!prodDeploymentId) {
     throw new Error("This project has no production deployment to import")
   }
-  // The real Vercel PROJECT id (prj_…), so it matches OTel spans' vercel.projectId
-  // — NOT the deployment id. Fail loudly rather than store a wrong value (the
+  // The real Vercel PROJECT id (prj_…), so it matches OTel spans' vercel.projectId,
+  // NOT the deployment id. Fail loudly rather than store a wrong value (the
   // project must exist; getProductionDeploymentId just succeeded for this slug).
   const vercelProjectId = await resolveProjectId(cfg, slug)
 
@@ -123,7 +123,7 @@ export async function importAgent(slug: string): Promise<{
 
   // Normalize the recovered config through the SAME validator the editor uses.
   // connectionIds stay empty: the global connection rows (with tokens) don't
-  // exist in this account yet — re-add them before redeploying.
+  // exist in this account yet; re-add them before redeploying.
   const config = normalizeAgentConfigInput({
     name: discovered.name,
     description: null,
@@ -167,13 +167,13 @@ export async function importAgent(slug: string): Promise<{
   // fall back to a row whose deterministic projectName matches this Vercel slug
   // (a project deployed by agent-army). Else INSERT, reusing the baked AGENT_ID
   // when free (so the deployed runtime's /api/agents/<id>/runtime-config resolves
-  // to this row) — it can't be owned by another row here, or the first lookup
+  // to this row); it can't be owned by another row here, or the first lookup
   // would have matched it. Only a slug-matched row with a different id, or no
   // baked id at all, yields a fresh id.
   const rows = await db.select().from(agents).where(eq(agents.userId, userId))
   const expectedDeploymentUrl = `https://${slug}.vercel.app`
   // The ONLY trustworthy identity for an imported agent is its stored
-  // deploymentUrl — real external Vercel metadata. projectName(row) and the baked
+  // deploymentUrl, real external Vercel metadata. projectName(row) and the baked
   // AGENT_ID are both attacker-influenceable (a malicious project's slug is
   // operator-chosen and its source is untrusted), so neither may select the row
   // we UPDATE. They are used only to REJECT collisions with a managed agent.
@@ -198,9 +198,9 @@ export async function importAgent(slug: string): Promise<{
   // Update target: ONLY a previously-imported row bound to THIS Vercel project by
   // its deployment URL. Anything else → insert a fresh row.
   const existing = projectRow
-  // Reuse the baked AGENT_ID only when no row already owns it (else a fresh UUID
-  // — reusing it would collide with idRow or let a cross-project baked id claim
-  // another row's identity).
+  // Reuse the baked AGENT_ID only when no row already owns it (else a fresh
+  // UUID: reusing it would collide with idRow or let a cross-project baked id
+  // claim another row's identity).
   const id =
     existing?.id ??
     (discovered.sourceAgentId && !idRow ? discovered.sourceAgentId : randomUUID())
@@ -244,7 +244,7 @@ export async function importAgent(slug: string): Promise<{
   // (not the in-memory build object): Postgres canonicalizes jsonb key order on
   // write, so hashing the pre-write JS objects would mismatch the row a later
   // read sees and show a false "needs redeploy" drift badge. `.returning()` gives
-  // the stored form in the same statement — no stale-read race against the pooler.
+  // the stored form in the same statement, with no stale-read race against the pooler.
   if (persisted) {
     await db
       .update(agents)

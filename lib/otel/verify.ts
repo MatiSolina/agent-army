@@ -16,6 +16,6 @@ export function verifyDrainSignature(
     .digest("hex")
   const a = Buffer.from(expected, "utf-8")
   const b = Buffer.from(signature, "utf-8")
-  // timingSafeEqual throws on length mismatch — guard first.
+  // timingSafeEqual throws on length mismatch, so guard first.
   return a.length === b.length && crypto.timingSafeEqual(a, b)
 }

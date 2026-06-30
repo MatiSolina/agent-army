@@ -2,7 +2,7 @@ import type { Agent, AgentHarness, Connection } from "@/lib/db/schema"
 import { MCP_CATALOG } from "@/lib/mcp-catalog"
 
 /**
- * Stage 1 — Eve agent generator (PURE).
+ * Stage 1: Eve agent generator (PURE).
  *
  * `buildEveAgent` turns a stored {@link Agent} (plus the {@link Connection} rows
  * it references) into a map of `{ relativePath: fileContents }`
@@ -85,7 +85,7 @@ function catalogEntryFor(conn: Connection) {
  * The DB row does not store an `auth` discriminator, so we infer it:
  *  1. If the connection has a static `token`, it is token-auth.
  *  2. Else, if its catalog entry has a `vercelConnect` UID, it is OAuth via
- *     Vercel Connect (eve's `connect()` — used for servers without Dynamic
+ *     Vercel Connect (eve's `connect()`, used for servers without Dynamic
  *     Client Registration, e.g. Slack).
  *  3. Else, if its catalog entry is `auth: "oauth"`, it is self-hosted DCR OAuth
  *     brokered through the Fleet Manager token endpoint.
@@ -106,7 +106,7 @@ export function classifyConnectionAuth(conn: Connection): ConnAuthKind {
 /**
  * The Vercel Connect connector UID for a connection, or null if it is not
  * Connect-backed. EXPORTED so the deploy flow (deploy-core) can attach the
- * connector to the agent's Vercel project — eve `connect(uid)` only works once
+ * connector to the agent's Vercel project; eve `connect(uid)` only works once
  * the consuming project is attached.
  */
 export function vercelConnectUid(conn: Connection): string | null {
@@ -128,7 +128,7 @@ export function tokenEnvVar(connSlug: string): string {
 function emitAgentTs(agent: Agent): string {
   // NOTE: eve's defineAgent only accepts a strict public shape. `modelOptions`
   // exposes provider-keyed `providerOptions`, NOT top-level AI SDK generation
-  // settings — eve rejects an unknown `temperature` key at build time with
+  // settings; eve rejects an unknown `temperature` key at build time with
   // "Unknown key \"temperature\"". So we do NOT serialize the stored
   // temperature into agent.ts; it would fail `eve build`. The value (0..100,
   // here ${agent.temperature} -> ${Math.round((agent.temperature / 100) * 100) / 100} on a 0..1 scale)
@@ -310,7 +310,7 @@ function emitSandbox(agent: Agent): string {
   // Defense in depth: with bash disabled the model has no shell to drive egress
   // from the sandbox, so close the network when the sandbox is authored. Left at
   // eve's allow-all default otherwise (omit the key entirely). Egress policy goes
-  // ON the backend factory — eve's defineSandbox has no top-level networkPolicy.
+  // ON the backend factory; eve's defineSandbox has no top-level networkPolicy.
   const networkPolicy =
     agent.harness?.bash === false ? `, networkPolicy: "deny-all"` : ""
 
@@ -393,9 +393,9 @@ function emitKapsoChannel(): string {
   // channels like the canonical eve channel). Point Kapso at that URL.
   //
   // Env (pushed by the dashboard deploy from the assigned channel's creds):
-  //   KAPSO_WEBHOOK_SECRET  — HMAC secret for inbound webhook verification
-  //   KAPSO_API_KEY         — used to send replies back through Kapso
-  //   KAPSO_PHONE_NUMBER_ID — the WhatsApp Business phone number id
+  //   KAPSO_WEBHOOK_SECRET:  HMAC secret for inbound webhook verification
+  //   KAPSO_API_KEY:         used to send replies back through Kapso
+  //   KAPSO_PHONE_NUMBER_ID: the WhatsApp Business phone number id
   return `import { defineChannel, GET, POST } from "eve/channels"
 import { createHmac, timingSafeEqual } from "node:crypto"
 
@@ -589,12 +589,12 @@ export default defineChannel({
 /**
  * Root instrumentation file. eve auto-discovers `agent/instrumentation.ts` and
  * its mere presence implicitly enables telemetry (no `isEnabled` toggle), so we
- * emit it ALWAYS — the deployed project's native Vercel Observability then gets
+ * emit it ALWAYS, so the deployed project's native Vercel Observability then gets
  * AI SDK spans for free.
  *
  * This is the exact vanilla shape from the eve docs (instrumentation.md): bare
  * `registerOTel` with an auto-resolved service name (eve passes the resolved
- * `agentName`), NO hardcoded name, NO `traceExporter`, NO env secret — Vercel's
+ * `agentName`), NO hardcoded name, NO `traceExporter`, NO env secret; Vercel's
  * OIDC handles export auth. No user/config string is interpolated, so there is
  * nothing to escape (and no `experimental_telemetry` on agent.ts: eve owns the
  * model-call spans; the root instrumentation file is the only injection point).
@@ -626,7 +626,7 @@ export default defineInstrumentation({
  * identifies this agent's Slack app/installation; Connect brokers the bot token
  * and inbound webhook verification, and resolves per-end-user credentials before
  * each turn. Slack delivers app_mention / message.im events to /eve/v1/slack on
- * this deployment — wired by the deploy's trigger-destination attach
+ * this deployment, wired by the deploy's trigger-destination attach
  * (see lib/vercel/client.ts attachTriggerDestination). HITL buttons, typing
  * indicators and the ephemeral authorization-prompt delivery come for free.
  */
@@ -644,8 +644,8 @@ export default slackChannel({
 
 /**
  * eve-native Telegram channel. Unlike Slack (Connect-brokered) this reads its
- * two static secrets straight from env — TELEGRAM_BOT_TOKEN and
- * TELEGRAM_WEBHOOK_SECRET_TOKEN — which the dashboard deploy pushes to the
+ * two static secrets straight from env (TELEGRAM_BOT_TOKEN and
+ * TELEGRAM_WEBHOOK_SECRET_TOKEN) which the dashboard deploy pushes to the
  * agent's Vercel project from the assigned channel's creds; so there is NO
  * credentials object and NO @vercel/connect import here. The channel mounts at
  * the built-in /eve/v1/telegram prefix. botUsername is optional (group @mention
@@ -716,7 +716,7 @@ export function buildEveAgent(
   files["agent/instructions.md"] = emitInstructionsBootstrap()
   files["agent/instructions/runtime.ts"] = emitRuntimeInstructions(agent)
 
-  // instrumentation.ts (always) — its presence implicitly enables eve telemetry.
+  // instrumentation.ts (always): its presence implicitly enables eve telemetry.
   files["agent/instrumentation.ts"] = emitInstrumentation()
 
   // skills/<slug>.md
@@ -729,7 +729,7 @@ export function buildEveAgent(
   const assignedIds = new Set(agent.connectionIds)
   for (const conn of opts.connections) {
     if (!assignedIds.has(conn.id)) continue
-    if (conn.transport === "stdio") continue // not a remote MCP server — skip
+    if (conn.transport === "stdio") continue // not a remote MCP server, skip
     const s = slug(conn.name, conn.id)
     files[`agent/connections/${s}.ts`] = emitConnection(conn, agent.id)
   }
@@ -753,7 +753,7 @@ export function buildEveAgent(
     files["agent/sandbox.ts"] = emitSandbox(agent)
   }
 
-  // tools/<slug>.ts — disableTool() guardrails for built-ins turned off in the
+  // tools/<slug>.ts: disableTool() guardrails for built-ins turned off in the
   // harness config (none by default; full harness stays intact).
   Object.assign(files, emitHarnessDisables(agent))
 
@@ -761,7 +761,7 @@ export function buildEveAgent(
   // `agents.toolIds`, but we no longer compile schema-only stubs into the agent
   // (they were no-op "not implemented" bodies). Tools come from MCP connections.
 
-  // channels/eve.ts (always — auth the Fleet Manager proxy via shared secret)
+  // channels/eve.ts (always): auth the Fleet Manager proxy via shared secret
   files["agent/channels/eve.ts"] = emitEveChannel()
 
   // Exactly ONE inbound channel, keyed by the assigned channel's type. Emitting

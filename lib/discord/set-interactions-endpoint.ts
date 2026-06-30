@@ -5,7 +5,7 @@
  * eve itself never sets this URL (it only verifies the inbound Ed25519
  * signature headers and ACKs within 3 seconds), so the control plane registers
  * the deployed PROD URL on promote. The PATCH fully REPLACES the endpoint on
- * each call, so it is idempotent — safe to re-run on every promote with no
+ * each call, so it is idempotent: safe to re-run on every promote with no
  * retries needed. On save Discord synchronously PINGs the URL (POST type:1), so
  * the endpoint must be LIVE and verify Ed25519 (which a promoted eve deploy
  * satisfies); a failed PING surfaces as a 400 here.

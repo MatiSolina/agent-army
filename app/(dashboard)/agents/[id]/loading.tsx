@@ -2,9 +2,9 @@ import { Skeleton } from "@/components/ui/skeleton"
 
 // Route-scoped fallback for the agent detail editor. The detail page runs 4
 // parallel server queries; without this, navigation showed the parent list
-// skeleton (rows) — semantically wrong for a tabbed editor. This mirrors the
-// AgentEditor's General tab above-the-fold (bordered, padded cards in a 2-col
-// grid) so the swap to real content is seamless and doesn't "jump" padding.
+// skeleton (rows), which is semantically wrong for a tabbed editor. This mirrors
+// the AgentEditor's General tab above-the-fold (bordered, padded cards in a 2-col
+// grid) so the swap to real content doesn't "jump" padding.
 export default function AgentDetailLoading() {
   return (
     <div className="space-y-6">

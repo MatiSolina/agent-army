@@ -43,7 +43,7 @@ describe("buildVercelDashboardUrls", () => {
     })
 
     for (const url of [result.project, result.observability, result.logs]) {
-      // No raw space — would corrupt the URL.
+      // No raw space; would corrupt the URL.
       expect(url).not.toContain(" ")
       // The raw "/" inside a segment must be percent-encoded so it cannot
       // create extra path segments.

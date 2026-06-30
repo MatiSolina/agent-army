@@ -59,7 +59,7 @@ export async function getStoredVercelOAuth(): Promise<{
 /**
  * Upsert the Vercel OAuth result into app_settings under key 'vercel_oauth'
  * (onConflictDoUpdate). value jsonb = { accessToken, teamId, installationId,
- * scope }. Single-tenant — there is exactly one row.
+ * scope }. Single-tenant: there is exactly one row.
  *
  * SECURITY: token exchange is server-side only; this writer is server-side
  * only and never logs the token.
@@ -124,7 +124,7 @@ async function readCliAuthTokenFromDisk(): Promise<string | null> {
 
 /**
  * Injectable dependencies for resolveVercelAuth. Mirrors how client.ts injects
- * `fetchImpl` — production omits these and the real readers are used; tests pass
+ * `fetchImpl`: production omits these and the real readers are used; tests pass
  * stubs so no DB / env / filesystem is touched.
  */
 export type ResolveVercelAuthDeps = {
@@ -143,7 +143,7 @@ export type ResolveVercelAuthDeps = {
  * Resolve the Vercel token and optional team ID for the REST client.
  *
  * Resolution order:
- *   1. Stored OAuth (app_settings 'vercel_oauth') — the Connect-Vercel path.
+ *   1. Stored OAuth (app_settings 'vercel_oauth'): the Connect-Vercel path.
  *   2. VERCEL_TOKEN env var (backward-compat, required in older serverless).
  *   3. LOCAL DEV FALLBACK: the Vercel CLI auth.json from the user's home dir.
  *   4. If none yields a token, throws an actionable error.
@@ -173,7 +173,7 @@ export async function resolveVercelAuth(
     return { token: envToken, teamId }
   }
 
-  // 3. LOCAL DEV FALLBACK — never reached in production (no CLI auth file there).
+  // 3. LOCAL DEV FALLBACK: never reached in production (no CLI auth file there).
   const cliToken = await readCliAuthToken()
   if (cliToken) {
     return { token: cliToken, teamId }

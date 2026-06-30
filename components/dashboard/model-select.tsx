@@ -72,7 +72,7 @@ export function ModelSelect({
   const shownRest = filterModels(rest, query)
 
   // base-ui resolves the trigger label from `items`, so every selectable value
-  // must appear here — including a gateway model that is the current value but
+  // must appear here, including a gateway model that is the current value but
   // hasn't loaded yet.
   const items = [...SUGGESTED_MODELS, ...rest].map((m) => ({
     value: m.id,
@@ -106,7 +106,7 @@ export function ModelSelect({
                 onKeyDown={(e) => e.stopPropagation()}
                 placeholder="Search models…"
                 // The global `*:focus-visible` box-shadow ring (globals.css) looks
-                // like a stray box on this borderless input — suppress it; the
+                // like a stray box on this borderless input, so suppress it; the
                 // wrapper's focus-within border is the focus cue instead.
                 className="h-7 flex-1 bg-transparent text-sm outline-none placeholder:text-muted-foreground focus-visible:shadow-none"
               />

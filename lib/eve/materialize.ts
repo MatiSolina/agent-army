@@ -5,9 +5,9 @@ import path from "node:path"
  * Write a `{ relativePath: contents }` file map (e.g. from `buildEveProject`)
  * to disk under `targetDir`, with two layers of path-traversal defence.
  *
- * Layer 1 — `isSafeRelativeKey`: a pure string check (no fs) that rejects
+ * Layer 1, `isSafeRelativeKey`: a pure string check (no fs) that rejects
  * absolute paths and any `..` segment. Unit-testable in isolation.
- * Layer 2 — `resolveWithinRoot`: resolves each key against the root and asserts
+ * Layer 2, `resolveWithinRoot`: resolves each key against the root and asserts
  * the result stays inside it (defence in depth, catches platform-specific edge
  * cases the string check might miss).
  */
@@ -46,7 +46,7 @@ export function resolveWithinRoot(root: string, key: string): string {
 }
 
 /**
- * Materialise the file map under `targetDir`. Does NOT clean the directory —
+ * Materialise the file map under `targetDir`. Does NOT clean the directory;
  * the caller is responsible for using a fresh temp dir. Returns the list of
  * absolute paths written.
  */

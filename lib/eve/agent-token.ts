@@ -5,8 +5,8 @@ import { createHmac, timingSafeEqual } from "node:crypto"
  * derives each agent's token as HMAC-SHA256(FM_AGENT_KEY, agentId). The token is
  * baked into that agent's Vercel env (EVE_AGENT_TOKEN); on every agent->FM
  * callback the FM recomputes the HMAC for the claimed agent id and compares, so a
- * token mathematically authorizes exactly one agent id — no per-agent secret is
- * stored and no DB migration is needed.
+ * token mathematically authorizes exactly one agent id, so no per-agent secret
+ * is stored and no DB migration is needed.
  *
  * agentId is NOT secret; the HMAC is the authorizer. FM_AGENT_KEY never leaves
  * the FM (env-spec.ts refuses to bake it), so leaking one agent's env exposes

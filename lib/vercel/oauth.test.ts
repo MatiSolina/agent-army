@@ -182,7 +182,7 @@ describe("generateOAuthState", () => {
   it("returns a non-empty, URL-safe base64url string", () => {
     const state = generateOAuthState()
     expect(state.length).toBeGreaterThan(0)
-    // base64url alphabet only — safe to put in a query string / cookie.
+    // base64url alphabet only, safe to put in a query string / cookie.
     expect(state).toMatch(/^[A-Za-z0-9_-]+$/)
   })
 

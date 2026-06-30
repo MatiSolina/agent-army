@@ -52,7 +52,7 @@ export async function getFreshAccessToken(
   // Issuance time: OAuthTokens stores only a RELATIVE `expires_in`, so the
   // absolute expiry is derived from the dedicated `oauthTokensUpdatedAt` stamp
   // (written atomically with the tokens). Tests inject `issuedAt`. NO fallback
-  // to the row-wide updatedAt — that gets bumped by unrelated edits and would
+  // to the row-wide updatedAt, which gets bumped by unrelated edits and would
   // skew expiry.
   const issuedAt = deps.issuedAt ?? (await loadIssuedAt(connectionId))
 
@@ -82,7 +82,7 @@ export async function getFreshAccessToken(
   if (!endpoint) {
     throw new Error("no token endpoint: needs reconnect")
   }
-  // SSRF guard: the token endpoint comes from AS discovery — reject internal /
+  // SSRF guard: the token endpoint comes from AS discovery, so reject internal /
   // non-https targets before POSTing the refresh token (and client secret) to it.
   await assertPublicHttpUrl(endpoint)
 
@@ -139,7 +139,7 @@ export async function getFreshAccessToken(
 
 /**
  * Read the token issuance time from the dedicated oauthTokensUpdatedAt stamp
- * (written atomically with the tokens). Returns undefined when unstamped — the
+ * (written atomically with the tokens). Returns undefined when unstamped, so the
  * caller then refreshes rather than trusting an unknown-age token.
  */
 async function loadIssuedAt(connectionId: string): Promise<number | undefined> {

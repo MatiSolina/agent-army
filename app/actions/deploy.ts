@@ -20,7 +20,7 @@ import { revalidatePath } from "next/cache"
 
 /**
  * Pick the eve pin (+ ai peer) a (re)deploy of this agent should ship. Default
- * is the fleet auto-update target (`eve.target` — pinned back for a gated bump).
+ * is the fleet auto-update target (`eve.target`, pinned back for a gated bump).
  * EXCEPTION: if this agent has VERIFIED the gated candidate in a preview-test
  * (`eveVerifiedVersion === eve.latest`), ship the candidate + its own ai peer
  * (`eve.latestAiPin`). Mirrors `eveUpdateOffer`'s per-agent gate override so the
@@ -85,7 +85,7 @@ export async function deployAgent(
  * Used by the channel auto-redeploy: a channel change on a live agent must land
  * on production (not sit at preview_ready), otherwise the bot keeps running the
  * old build and the channel never actually activates. Promotes the build it
- * just created — never a stale one.
+ * just created, never a stale one.
  */
 export async function deployAndPromoteAgent(
   agentId: string,
@@ -128,10 +128,10 @@ export async function promoteAgentDeployment(
  * Preview-test a GATED eve bump for one agent: deploy a preview pinned to the
  * candidate version, ping it once, and gate the per-agent Update on the result.
  *
- * The test artifact IS the deploy — same Node 24 remote build + runtime as prod
+ * The test artifact IS the deploy: same Node 24 remote build + runtime as prod
  * (maximum fidelity). The pass criterion is purely operational: the preview
  * builds + deploys + answers ONE ping with HTTP 200 and a non-empty body (no
- * response-quality judgement — that belongs to eve evals).
+ * response-quality judgement, that belongs to eve evals).
  *
  *   - success → set `agents.eveVerifiedVersion = candidateVersion`, clear
  *     `eveVerifyError`. The preview is LEFT staged (not promoted) so the user can
@@ -157,7 +157,7 @@ export async function testEvePreview(
   const userId = await requireUserId()
   const connections = await getConnections()
   // The CANDIDATE's `ai` peer pin. For a gated bump `eve.target` is pinned back
-  // to the current version, so its `aiPin` is the OLD ai peer — we must use
+  // to the current version, so its `aiPin` is the OLD ai peer; we must use
   // `latestAiPin` (resolved against `eve.latest`, the candidate we pin here).
   const eve = await resolveLatestEve()
 
@@ -210,7 +210,7 @@ export async function testEvePreview(
       })
       .where(and(eq(agents.id, agentId), eq(agents.userId, userId)))
 
-    // Housekeeping: drop the pinned preview (it is never promoted). Best-effort —
+    // Housekeeping: drop the pinned preview (it is never promoted). Best-effort:
     // a delete failure must not mask the real verdict error. Deletes ONLY this
     // deployment, never the project (which still serves prod).
     if (previewDeploymentId) {

@@ -12,7 +12,7 @@
  * the durable runtime.
  *
  * Canary-then-rest is two separate manual triggers (startFleetCanary /
- * startFleetRollout) — no pause/resume primitive needed; the human gate is just
+ * startFleetRollout); no pause/resume primitive needed, the human gate is just
  * two button clicks.
  */
 
@@ -38,7 +38,7 @@ export type FleetResult = {
 }
 
 // ---------------------------------------------------------------------------
-// Steps — full Node.js access (db, vercel client, deploy-core). The workflow
+// Steps: full Node.js access (db, vercel client, deploy-core). The workflow
 // sandbox cannot import these, so every Node-touching operation is its own
 // `'use step'`. The workflow function below only orchestrates (sleep + steps).
 // ---------------------------------------------------------------------------
@@ -105,7 +105,7 @@ async function persistResultStep(
 /**
  * Per-agent orchestration: capture rollback → deploy from snapshot → durable
  * READY poll → promote. Plain (workflow-level) so it stays unit-testable; its
- * body uses ONLY `sleep` + the steps above — never a Node module directly —
+ * body uses ONLY `sleep` + the steps above (never a Node module directly)
  * so it bundles cleanly into the workflow sandbox.
  *
  * Idempotent: deployAgentCore's CAS lock guards double-deploy; promote is a
@@ -136,7 +136,7 @@ export async function updateOneAgent(
   }
 
   if (state !== "READY") {
-    // Build errored or timed out — prod untouched, skip + record.
+    // Build errored or timed out: prod untouched, skip + record.
     return { agentId, outcome: "skipped", rollbackTarget }
   }
 

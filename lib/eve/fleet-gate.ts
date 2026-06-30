@@ -6,8 +6,8 @@ import { and, eq } from "drizzle-orm"
  * True iff a canary for `target` ran to completion AND actually updated its
  * agent without rolling back. This is the human-gate proof the rollout step
  * must check: a rollout must never run on a target whose canary was skipped,
- * failed, or never executed. (fleetUpdates has no per-user column — single
- * operator — so this is account-wide.)
+ * failed, or never executed. (fleetUpdates has no per-user column, single
+ * operator, so this is account-wide.)
  */
 export async function hasPassedCanary(target: string): Promise<boolean> {
   const rows = await db

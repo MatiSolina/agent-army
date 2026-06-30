@@ -90,7 +90,7 @@ export async function GET(req: NextRequest) {
     ok.cookies.delete(VERCEL_OAUTH_STATE_COOKIE)
     return ok
   } catch (err) {
-    // Log a sanitized message only — the thrown errors are already fixed
+    // Log a sanitized message only. The thrown errors are already fixed
     // strings (no secret / body), but be explicit and never echo `err.message`
     // back into the UI.
     console.error(

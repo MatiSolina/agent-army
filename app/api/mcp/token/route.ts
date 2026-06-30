@@ -16,7 +16,7 @@ export const dynamic = "force-dynamic"
  *
  * The child agent's generated MCP connection calls this with its PER-AGENT token
  * HMAC(FM_AGENT_KEY, agentId) and its own id. We verify the token authorizes that
- * agent AND that the requested connection belongs to it — so a leaked agent token
+ * agent AND that the requested connection belongs to it, so a leaked agent token
  * can only broker tokens for its OWN connections, never the whole fleet's.
  *
  * The OAuth flow itself is self-hosted in the FM (consent once in the UI,
@@ -52,7 +52,7 @@ export async function GET(req: NextRequest) {
   } catch (err) {
     // Map "needs reconnect" conditions to 409 so the operator UI can prompt a
     // reconnect; everything else (refresh / network failure) is a 502. Log only
-    // the redacted message — never the token or the AS response body.
+    // the redacted message, never the token or the AS response body.
     const message = err instanceof Error ? err.message : "unknown error"
     if (/needs reconnect|no token|expired/i.test(message)) {
       return new Response(null, { status: 409 })
@@ -65,7 +65,7 @@ export async function GET(req: NextRequest) {
 /**
  * Extract the value from an "Authorization: Bearer <token>" header. Inlined
  * (rather than imported from eve/channels/auth, which is not installed in the
- * Fleet Manager) — the same trivial split the generated eve channel uses.
+ * Fleet Manager), the same trivial split the generated eve channel uses.
  */
 function extractBearerToken(header: string | null): string | null {
   if (!header) return null

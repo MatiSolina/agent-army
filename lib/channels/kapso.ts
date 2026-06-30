@@ -8,7 +8,7 @@
  *
  * `phoneNumberId` is the Meta phone number id (`phone_number_id`) that the
  * generated channel uses to send replies via
- * `https://api.kapso.ai/meta/whatsapp/v23.0/{phoneNumberId}/messages` — i.e. the
+ * `https://api.kapso.ai/meta/whatsapp/v23.0/{phoneNumberId}/messages`, i.e. the
  * exact value that belongs in KAPSO_PHONE_NUMBER_ID.
  */
 export type KapsoPhoneNumber = {
@@ -76,7 +76,7 @@ const KAPSO_WEBHOOK_EVENTS = ["whatsapp.message.received"]
 
 /**
  * Register (or refresh) the deployed agent's Kapso webhook so inbound WhatsApp
- * messages reach `<deployment>/kapso/webhook` — no manual URL paste and no
+ * messages reach `<deployment>/kapso/webhook`, with no manual URL paste and no
  * operator-provided signing secret. Kapso's create-webhook endpoint accepts a
  * client-supplied `secret_key`, so the control plane mints the secret, bakes it
  * into the agent (KAPSO_WEBHOOK_SECRET) AND registers it here on promote, exactly

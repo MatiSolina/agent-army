@@ -1,7 +1,7 @@
 // Self-healing Vercel Trace Drain management. ensureTraceDrain() is idempotent:
 // it creates the drain that streams agent OTel spans into /api/drains/traces if
 // it doesn't exist yet, and reports plan_blocked when the team's plan (Hobby /
-// Pro Trial) doesn't allow drains — so the day the plan is upgraded, the next
+// Pro Trial) doesn't allow drains, so the day the plan is upgraded, the next
 // call wires it up with no manual step. fetchImpl is injectable for tests,
 // mirroring lib/vercel/client.ts.
 

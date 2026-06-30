@@ -5,7 +5,7 @@
 // (the ingest dedupes via ON CONFLICT on the PK).
 //
 // Safe-ish: drops the old single-column PK and adds the composite PK. If two rows
-// somehow share (traceId, spanId) the ADD will fail — dedupe first (the DELETE
+// somehow share (traceId, spanId) the ADD will fail, so dedupe first (the DELETE
 // below keeps the earliest createdAt). spans is observability data, so this is
 // low-risk; back up first if you care about historical spans.
 //

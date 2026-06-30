@@ -20,7 +20,7 @@ export function generateOAuthState(): string {
 /**
  * Constant-time compare of the `state` returned by Vercel against the value we
  * stored in the cookie. Returns false (never throws) on null/empty inputs or a
- * length mismatch — timingSafeEqual requires equal-length buffers.
+ * length mismatch: timingSafeEqual requires equal-length buffers.
  */
 export function safeCompareState(
   provided: string | null | undefined,
@@ -116,7 +116,7 @@ export async function exchangeCodeForToken(
   })
 
   if (!res.ok) {
-    // Do NOT read/echo the body — it may reflect credentials. Fixed message.
+    // Do NOT read/echo the body; it may reflect credentials. Fixed message.
     throw new Error("Vercel token exchange failed")
   }
 

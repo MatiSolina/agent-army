@@ -34,13 +34,13 @@ const ORDER: Phase[] = ["preparing", "building", "ready"]
 
 /**
  * Live redeploy modal: while deployAgent runs server-side, this polls the
- * deploy-progress route (a route handler, NOT a server action — those serialize
+ * deploy-progress route (a route handler, NOT a server action; those serialize
  * behind the long deploy) and streams Vercel's real build state + log tail.
  *
  * `since` is when the user clicked Deploy, so a prior build's READY state never
  * flashes before the new deployment registers. `failed` lets the parent surface
  * a deployAgent rejection that happens BEFORE any Vercel deployment exists
- * (project/env error) — the route would otherwise sit on "preparing" forever.
+ * (project/env error); the route would otherwise sit on "preparing" forever.
  */
 export function DeployProgressModal({
   agentId,
@@ -92,14 +92,14 @@ export function DeployProgressModal({
             ...data,
             logs: data.logs?.length ? data.logs : prev?.logs ?? [],
           }))
-          // Stop once terminal — but only after logs land. A fast build flips to
+          // Stop once terminal, but only after logs land. A fast build flips to
           // READY before the events endpoint has materialized its log lines, so
           // keep polling a few more ticks to backfill the tail.
           const terminal = data.phase === "ready" || data.phase === "error"
           if (terminal && (data.logs?.length || ++settleTicks >= 3)) return
         }
       } catch {
-        // transient — keep polling
+        // transient, keep polling
       }
       if (!cancelled) timer = setTimeout(tick, 2000)
     }
@@ -208,7 +208,7 @@ export function DeployProgressModal({
           )}
         </div>
 
-        {/* Actions — only render the footer bar once there's something to act
+        {/* Actions: only render the footer bar once there's something to act
             on. While building there are no buttons, so an always-on footer just
             reads as a broken empty strip. */}
         {done && (

@@ -94,7 +94,7 @@ export function ChannelsView({
   const [unassigning, setUnassigning] = useState(false)
 
   // Channels with a re-deploy in flight from a just-issued assign/unassign. While
-  // set, the row shows "Re-deploying…" and the agent picker is blocked — both
+  // set, the row shows "Re-deploying…" and the agent picker is blocked, for both
   // assign (new agent building) and unassign (old agent rebuilds to drop creds)
   // trigger a build, and re-acting before it settles would clash. Value = the
   // agent id whose build we wait on; `since` guards the brief window before the
@@ -132,7 +132,7 @@ export function ChannelsView({
       if (status === "deploying") sawDeploying.current[channelId] = true
       const settled = status !== "deploying"
       // Clear once the build we waited on has settled (we saw it go deploying
-      // then leave it), or after a 120s hard cap so it can never hang — the
+      // then leave it), or after a 120s hard cap so it can never hang. The
       // background deploy starts within seconds, so sawDeploying drives the
       // normal case and the cap only covers a deploy that never started.
       if (settled && (sawDeploying.current[channelId] || Date.now() - since > 120000)) {
@@ -191,7 +191,7 @@ export function ChannelsView({
     try {
       await assignAgentToChannel(channelId, null)
       toast.success("Agent unassigned")
-      // The old agent now rebuilds to drop the channel creds — block re-assigning
+      // The old agent now rebuilds to drop the channel creds; block re-assigning
       // it until that build settles.
       if (agentId) {
         setBusy((b) => ({ ...b, [channelId]: { agentId, since: Date.now() } }))
@@ -430,7 +430,7 @@ function ChannelRow({
   channel: ClientChannel
   agents: Agent[]
   agentName: (id: string | null) => string | null
-  /** A just-issued assign/unassign build is in flight — block re-assignment. */
+  /** A just-issued assign/unassign build is in flight; block re-assignment. */
   building: boolean
   onAssign: (agentId: string) => void
   onUnassign: () => void
@@ -557,7 +557,7 @@ function ChannelRow({
         )}
 
       {/* Teardown build after an unassign: the channel has no agent anymore, so
-          no per-type status renders — surface the in-flight rebuild here. */}
+          no per-type status renders, so surface the in-flight rebuild here. */}
       {building && !channel.agentId && (
         <div className="flex items-center gap-2 border-t border-border pt-3 text-xs text-muted-foreground">
           <Loader2 className="h-3.5 w-3.5 animate-spin" aria-hidden="true" />

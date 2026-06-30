@@ -109,7 +109,7 @@ describe("resolveLatestEve", () => {
   it("resolves latestAiPin from the CANDIDATE (latest), not the pinned-back target", async () => {
     // Gated bump: target pins back to EVE_VERSION (0.16.0) but the candidate is
     // 0.17.0 with a NEWER ai peer. The preview-test pins the candidate eve, so it
-    // must carry the candidate's ai peer — aiPin (target's) would be the old one.
+    // must carry the candidate's ai peer; aiPin (target's) would be the old one.
     vi.stubGlobal(
       "fetch",
       vi.fn().mockResolvedValue({

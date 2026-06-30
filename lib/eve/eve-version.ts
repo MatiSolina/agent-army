@@ -45,11 +45,11 @@ export function compareEve(pin: string, latest: string): { target: string; gated
  * Decide whether the editor's "Update to <v>" button is offered, using the same
  * gate logic as the fleet auto-update workflow ({@link compareEve}). Never offers
  * a downgrade; offers a patch upgrade outright. A breaking-change (`gated`) bump
- * is normally hidden — UNLESS `eveVerifiedVersion` exactly equals the latest
+ * is normally hidden, UNLESS `eveVerifiedVersion` exactly equals the latest
  * target, i.e. THIS agent already proved the candidate builds + responds in a
  * pinned preview deploy. That per-agent verdict overrides the gate (and only for
- * the version that was actually verified — a stale/different value never does).
- * `agentVersion` null = never deployed → no button.
+ * the version that was actually verified; a stale/different value never does).
+ * `agentVersion` null = never deployed, so no button.
  */
 export function eveUpdateOffer(
   agentVersion: string | null,
@@ -59,7 +59,7 @@ export function eveUpdateOffer(
   if (!agentVersion) return { show: false, to: currentTarget }
   const { target, gated } = compareEve(agentVersion, currentTarget)
   // A verified gated bump: this agent proved the candidate (currentTarget) in a
-  // preview-test, so override the gate and offer it — but ONLY if it is a real
+  // preview-test, so override the gate and offer it, but ONLY if it is a real
   // forward bump (never a downgrade/no-op). For a gated bump compareEve pins
   // `target` back to agentVersion, so we point the offer at currentTarget here.
   if (
@@ -80,7 +80,7 @@ export function eveUpdateOffer(
  * {@link EVE_AI_VERSION}) on any fetch/parse failure so the dashboard never lies
  * about a "behind" state when npm is unreachable. Cached ~1h via fetch revalidate.
  *
- * `zod` is NOT in eve's peerDependencies — keep it a project const, independent
+ * `zod` is NOT in eve's peerDependencies, so keep it a project const, independent
  * of the ai-pin re-resolution here.
  */
 export async function resolveLatestEve(): Promise<EveTarget> {

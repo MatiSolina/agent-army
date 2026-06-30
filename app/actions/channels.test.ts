@@ -4,7 +4,7 @@ import { describe, it, expect, vi, beforeEach } from "vitest"
 // Mock every I/O boundary so the "use server" channel actions run with no
 // request, no network, no real db. The actions are exercised end-to-end
 // (createChannel / updateChannel / assignAgentToChannel) which internally runs
-// computeStatus / validateChannelAssignment / normalizeChannelInput — the
+// computeStatus / validateChannelAssignment / normalizeChannelInput. The
 // helpers themselves can't be imported (a "use server" file only exports async
 // functions). Mirrors the deploy-core.test capture-and-fixture db.
 // ---------------------------------------------------------------------------

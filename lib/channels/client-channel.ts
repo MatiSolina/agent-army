@@ -37,11 +37,11 @@ export type ClientChannel = {
 }
 
 /**
- * Whether a channel has the CREDENTIALS its type needs to operate — independent
+ * Whether a channel has the CREDENTIALS its type needs to operate, independent
  * of whether an agent is assigned. The server's computeStatus folds in agentId
  * (no agent → "disconnected"), so a configured-but-unassigned channel reads as
  * not-connected; the UI uses this to still offer agent assignment for such a
- * channel (you can't gate assignment on "connected" — that already requires an
+ * channel (you can't gate assignment on "connected"; that already requires an
  * agent). Browser-safe: reads only the non-secret booleans + ids.
  */
 export function isChannelConfigured(channel: ClientChannel): boolean {

@@ -15,7 +15,7 @@ export type Deployment = Awaited<ReturnType<typeof getAgentDeployments>>[number]
 /**
  * Deployments tab: lists the agent's recent Vercel deployments and lets a
  * non-technical user promote any built one to production. Rollback == promoting
- * an older deployment (Vercel's native promote primitive — no custom logic).
+ * an older deployment (Vercel's native promote primitive, no custom logic).
  *
  * Controlled by AgentEditor: the list (and its loading state) is fetched up in
  * the editor the moment the agent is selected, so the data is ready before this

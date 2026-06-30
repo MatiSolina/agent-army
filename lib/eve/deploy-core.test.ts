@@ -40,7 +40,7 @@ vi.mock("@/lib/channels/kapso", () => ({
 }))
 
 // ---------------------------------------------------------------------------
-// Fake db. note: a capture-and-fixture store — does NOT evaluate drizzle
+// Fake db. note: a capture-and-fixture store that does NOT evaluate drizzle
 // conditions (the operators are opaque). Tests put ONE row per table, so
 // ignoring `.where()` and applying `.set()` to all rows of the matched table
 // is sufficient and avoids re-implementing a drizzle condition evaluator.
@@ -92,7 +92,7 @@ vi.mock("@/lib/eve/project", () => ({
   EVE_VERSION: "0.16.0",
 }))
 
-// fetch is used for the ssoProtection PATCH — stub it to a no-op success.
+// fetch is used for the ssoProtection PATCH; stub it to a no-op success.
 beforeEach(() => {
   vi.stubGlobal("fetch", vi.fn().mockResolvedValue({ ok: true }))
 })
@@ -157,14 +157,14 @@ describe("deployAgentCore (session-free)", () => {
       aiVersion: "^7.0.0",
     })
     expect(out.previewDeploymentId).toBe("dpl_1")
-    // The core did NOT throw "Unauthorized" — proving it is session-free.
+    // The core did NOT throw "Unauthorized", proving it is session-free.
     // The status row was advanced to preview_ready.
     expect((stores.get(agents) ?? [])[0].deploymentStatus).toBe("preview_ready")
   })
 
   it("clears a stale preview-test verdict on a normal (config) deploy", async () => {
     // An agent that previously verified/failed a gated bump must drop that
-    // verdict when its config is re-deployed — the verdict is tied to the OLD
+    // verdict when its config is re-deployed; the verdict is tied to the OLD
     // config and must not un-gate (nor linger as a stale error).
     setRow(
       agents,
@@ -212,7 +212,7 @@ describe("deployAgentCore (session-free)", () => {
     expect(out.previewDeploymentId).toBe("dpl_1")
     expect(out.previewUrl).toBe("https://x-abc.vercel.app")
     const after = (stores.get(agents) ?? [])[0]
-    // The live row is intact — the agent is still deployed on its old version.
+    // The live row is intact; the agent is still deployed on its old version.
     expect(after.deploymentStatus).toBe("deployed")
     expect(after.eveVersion).toBe("0.16.0")
     expect(after.previewUrl).toBeNull()
@@ -478,7 +478,7 @@ describe("deployAgentCore (session-free)", () => {
       aiVersion: "^7.0.0",
     })
     const [, opts] = buildEveProjectSpy.mock.calls[0]
-    // Discord threads no extra structural field — the passthrough adds nothing.
+    // Discord threads no extra structural field, so the passthrough adds nothing.
     expect((opts as { channel?: unknown }).channel).toEqual({
       type: "discord",
       slackConnectUid: null,

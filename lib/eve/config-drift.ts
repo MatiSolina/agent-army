@@ -11,7 +11,7 @@
  *
  * Pure: no I/O. The hash is over an explicit ALLOWLIST of build-affecting fields
  * so deploy bookkeeping (status, timestamps, urls, eveVersion) never reads as
- * drift — a naive `updatedAt > lastDeployedAt` check is unreliable because the
+ * drift. A naive `updatedAt > lastDeployedAt` check is unreliable because the
  * deploy/promote/failure paths all bump `updatedAt`.
  *
  * note: hashes the agent row only; a *connection's* content changing (not its

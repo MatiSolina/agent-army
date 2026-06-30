@@ -25,7 +25,7 @@ export function validateJsonSchema(value: string): string | null {
  * Accepts wildcards, lists (1,2), ranges (1-5), and steps (e.g. every-N).
  *
  * This is editor-side validation only. Runtime cron *matching* no longer lives
- * in the dashboard — each agent is deployed as its own Eve project and Eve wires
+ * in the dashboard: each agent is deployed as its own Eve project and Eve wires
  * its own Vercel Cron per schedule. We only validate the expression the operator
  * types so it is well-formed before it is compiled into the deployed agent.
  */
