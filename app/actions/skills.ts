@@ -4,38 +4,28 @@ import { unzipSync, strFromU8 } from "fflate"
 import { randomUUID } from "crypto"
 import type { AgentSkill } from "@/lib/db/schema"
 import { requireSessionUser } from "@/lib/session"
+import {
+  fetchCuratedSkillsSh,
+  fetchSearchSkillsSh,
+  type SkillShResult,
+} from "@/lib/skills/skills-sh"
 
 // ----- skills.sh integration -----
 //
 // These server actions wrap the skills.sh API so the bearer token
 // (VERCEL_OIDC_TOKEN) never reaches the client and we sidestep CORS.
 // They return clean data the Skills editor can drop straight into local state.
+// The fetch helpers live in `lib/skills/skills-sh.ts` (NOT a "use server"
+// file) so they can't be invoked as server actions directly, which would
+// bypass the requireSessionUser() gate enforced here.
+
+export type { SkillShResult } from "@/lib/skills/skills-sh"
 
 const SKILLS_SH_BASE = "https://skills.sh/api/v1"
 const MAX_ZIP_BYTES = 5 * 1024 * 1024 // 5 MB is plenty for a SKILL.md bundle
 const MAX_CONTENT_CHARS = 200_000
 const MAX_QUERY_CHARS = 120
 const MAX_PATH_CHARS = 200
-
-export type SkillShResult = {
-  id: string
-  slug: string
-  name: string
-  source: string
-  installs: number
-}
-
-type CuratedOrSearchResponse = {
-  data?: Array<{
-    id?: string
-    slug?: string
-    name?: string
-    source?: string
-    installs?: number
-    installUrl?: string
-    url?: string
-  }>
-}
 
 type SkillDetailResponse = {
   files?: Array<{ path?: string; contents?: string }>
@@ -47,22 +37,6 @@ function authHeaders(): HeadersInit {
     Accept: "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
   }
-}
-
-function normalizeResults(json: CuratedOrSearchResponse): SkillShResult[] {
-  const seen = new Set<string>()
-  return (json.data ?? [])
-    .filter((r) => r.slug && r.name && r.source)
-    .map((r) => ({
-      id: r.id ?? `${r.source}/${r.slug}`,
-      slug: r.slug as string,
-      name: r.name as string,
-      source: r.source as string,
-      installs: typeof r.installs === "number" ? r.installs : 0,
-    }))
-    // skills.sh can return the same skill twice (e.g. curated + search overlap);
-    // dedupe so React keys stay unique and we don't show duplicate rows.
-    .filter((r) => !seen.has(r.id) && seen.add(r.id))
 }
 
 /**
@@ -109,47 +83,6 @@ function skillFromMarkdown(raw: string): AgentSkill | null {
     name,
     description: (data.description ?? "").trim(),
     content: body.slice(0, MAX_CONTENT_CHARS),
-  }
-}
-
-// /curated groups skills by owner with a nested `skills[]` array, a different
-// shape from /search (flat). Flatten it before normalizing.
-type CuratedResponse = {
-  data?: Array<{ skills?: CuratedOrSearchResponse["data"] }>
-}
-
-// Pure fetch helpers (no "use server"), so they're unit-testable: the fetch
-// logic is extracted from the server actions and degrades to [] on any failure
-// (401, 5xx, network). A server action that throws turns into a 500 and breaks
-// the rendering Server Component (the Capabilities tab goes blank in prod);
-// returning [] keeps the action — and the tab — alive when skills.sh is down.
-export async function fetchCuratedSkillsSh(): Promise<SkillShResult[]> {
-  try {
-    const res = await fetch(`${SKILLS_SH_BASE}/skills/curated`, {
-      headers: authHeaders(),
-      cache: "no-store",
-    })
-    if (!res.ok) return []
-    const json = (await res.json()) as CuratedResponse
-    const flat = (json.data ?? []).flatMap((group) => group.skills ?? [])
-    return normalizeResults({ data: flat })
-  } catch {
-    return []
-  }
-}
-
-export async function fetchSearchSkillsSh(query: string): Promise<SkillShResult[]> {
-  const q = query.trim().slice(0, MAX_QUERY_CHARS)
-  if (!q) return []
-  try {
-    const res = await fetch(
-      `${SKILLS_SH_BASE}/skills/search?q=${encodeURIComponent(q)}&limit=20`,
-      { headers: authHeaders(), cache: "no-store" },
-    )
-    if (!res.ok) return []
-    return normalizeResults((await res.json()) as CuratedOrSearchResponse)
-  } catch {
-    return []
   }
 }
 
