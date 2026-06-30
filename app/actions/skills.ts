@@ -13,12 +13,13 @@ import {
 
 // ----- skills.sh integration -----
 //
-// These server actions wrap the skills.sh API so the bearer token
-// (VERCEL_OIDC_TOKEN) never reaches the client and we sidestep CORS.
-// They return clean data the Skills editor can drop straight into local state.
-// The fetch helpers live in `lib/skills/skills-sh.ts` (NOT a "use server"
-// file) so they can't be invoked as server actions directly, which would
-// bypass the requireSessionUser() gate enforced here.
+// These server actions wrap the skills.sh API so the Vercel OIDC bearer token
+// (resolved by lib/skills/oidc-token via @vercel/oidc, auto-refreshed in local
+// dev) never reaches the client, and we sidestep CORS. They return clean data
+// the Skills editor can drop straight into local state. The fetch helpers live
+// in `lib/skills/skills-sh.ts` (NOT a "use server" file) so they can't be
+// invoked as server actions directly, which would bypass the
+// requireSessionUser() gate enforced here.
 
 export type { SkillShResult } from "@/lib/skills/skills-sh"
 

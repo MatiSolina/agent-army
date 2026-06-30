@@ -8,6 +8,7 @@
 // callable from the authenticated server actions but not from the client.
 
 import { randomUUID } from "@/lib/uid"
+import { getOidcToken } from "@/lib/skills/oidc-token"
 
 const SKILLS_SH_BASE = "https://skills.sh/api/v1"
 const MAX_QUERY_CHARS = 120
@@ -51,8 +52,8 @@ type CuratedResponse = {
   data?: Array<{ skills?: CuratedOrSearchResponse["data"] }>
 }
 
-function authHeaders(): HeadersInit {
-  const token = process.env.VERCEL_OIDC_TOKEN
+async function authHeaders(): Promise<HeadersInit> {
+  const token = await getOidcToken()
   return {
     Accept: "application/json",
     ...(token ? { Authorization: `Bearer ${token}` } : {}),
@@ -82,7 +83,7 @@ function normalizeResults(json: CuratedOrSearchResponse): SkillShResult[] {
 export async function fetchCuratedSkillsSh(): Promise<SkillShResult[]> {
   try {
     const res = await fetch(`${SKILLS_SH_BASE}/skills/curated`, {
-      headers: authHeaders(),
+      headers: await authHeaders(),
       cache: "no-store",
     })
     if (!res.ok) return []
@@ -100,7 +101,7 @@ export async function fetchSearchSkillsSh(query: string): Promise<SkillShResult[
   try {
     const res = await fetch(
       `${SKILLS_SH_BASE}/skills/search?q=${encodeURIComponent(q)}&limit=20`,
-      { headers: authHeaders(), cache: "no-store" },
+      { headers: await authHeaders(), cache: "no-store" },
     )
     if (!res.ok) return []
     return normalizeResults((await res.json()) as CuratedOrSearchResponse)
@@ -176,7 +177,7 @@ export async function fetchSkillDetailSh(
   try {
     const res = await fetch(
       `${SKILLS_SH_BASE}/skills/${sourcePath}/${encodeURIComponent(safeSlug)}`,
-      { headers: authHeaders(), cache: "no-store" },
+      { headers: await authHeaders(), cache: "no-store" },
     )
     if (!res.ok) return null
     const json = (await res.json()) as SkillDetailResponse
