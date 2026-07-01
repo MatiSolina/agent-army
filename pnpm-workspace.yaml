@@ -1,13 +1,13 @@
 packages:
   - "."
 
-allowBuilds:
-  '@swc/core': true
-  cbor-extract: true
-  esbuild: true
-  msw: true
-  sharp: true
-  unrs-resolver: true
+onlyBuiltDependencies:
+  - '@swc/core'
+  - cbor-extract
+  - esbuild
+  - msw
+  - sharp
+  - unrs-resolver
 
 overrides:
   hono: 4.12.25
