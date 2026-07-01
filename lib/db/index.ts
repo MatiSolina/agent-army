@@ -3,7 +3,10 @@ import { Pool } from "pg"
 import * as schema from "./schema"
 import { SUPABASE_CA } from "./supabase-ca"
 
-const connectionString = process.env.DATABASE_URL
+// Prefer the app's own DATABASE_URL, but fall back to the Supabase integration's
+// POSTGRES_URL (what the Vercel/Supabase integration injects) so the app boots
+// without extra manual env mapping.
+const connectionString = process.env.DATABASE_URL || process.env.POSTGRES_URL
 
 // Supabase poolers require TLS. Local Postgres does not.
 const isLocal = !connectionString || /localhost|127\.0\.0\.1/.test(connectionString)
