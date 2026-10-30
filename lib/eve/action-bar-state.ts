@@ -42,10 +42,15 @@ export function saveButtonState(p: {
   }
 }
 
-// Auto-build on create: a from-template agent fires one preview build so the
-// user lands on an already-building agent instead of an idle Draft. Gated to a
-// never-deployed agent (so opening an existing one never redeploys) and to a
-// single in-flight build.
+// Auto-deploy on create: no agent may sit as a never-deployed Draft, so EVERY
+// create path (template or scratch) lands on the editor with this flag and the
+// editor ships it straight to production.
+export function newAgentPath(slug: string): string {
+  return `/agents/${slug}?building=1`
+}
+
+// Gated to a never-deployed agent (so opening an existing one never redeploys)
+// and to a single in-flight build.
 export function shouldAutoBuild(p: {
   requested: boolean
   status: string | null
