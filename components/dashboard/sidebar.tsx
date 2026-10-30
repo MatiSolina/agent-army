@@ -11,7 +11,6 @@ import {
   Radio,
   Plug,
   Activity,
-  BookOpen,
   Menu,
   X,
   LogOut,
@@ -22,7 +21,6 @@ const nav = [
   { href: "/channels", label: "Channels", icon: Radio },
   { href: "/mcp", label: "MCP", icon: Plug },
   { href: "/observability", label: "Observability", icon: Activity },
-  { href: "/how-it-works", label: "How it works", icon: BookOpen },
 ]
 
 function Brand({ collapsible = false }: { collapsible?: boolean }) {
