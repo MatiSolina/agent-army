@@ -4,7 +4,14 @@ import {
   deployButtonState,
   agentStatusBadge,
   shouldAutoBuild,
+  newAgentPath,
 } from "./action-bar-state"
+
+describe("newAgentPath", () => {
+  it("lands every freshly-created agent on the editor with auto-deploy requested", () => {
+    expect(newAgentPath("support-bot")).toBe("/agents/support-bot?building=1")
+  })
+})
 
 describe("shouldAutoBuild", () => {
   it("builds a freshly-created, never-deployed agent when requested", () => {

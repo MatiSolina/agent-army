@@ -20,6 +20,7 @@ import { updateAgentConfig, deleteAgent } from "@/app/actions/agents"
 import { generateSystemPrompt } from "@/app/actions/generate-prompt"
 import {
   deployAgent,
+  deployAndPromoteAgent,
   promoteAgentDeployment,
   getAgentDeployments,
   testEvePreview,
@@ -384,10 +385,13 @@ export function AgentEditor({
     import("@/components/dashboard/agent-deployments")
   }, [loadDeployments])
 
-  // Auto-build on create: a from-template agent lands here with ?building=1 and
-  // kicks off one preview build in the background (no modal, you configure
-  // while it builds). Ref-guarded + server CAS-locked so it can't double-fire;
-  // the flag is dropped from the URL so a refresh won't re-trigger it.
+  // Auto-deploy on create: every new agent lands here with ?building=1 and is
+  // built AND promoted to production in the background (no modal, you configure
+  // while it ships), so it is never left a never-deployed Draft. Ref-guarded +
+  // server CAS-locked so it can't double-fire; the flag is dropped from the URL
+  // so a refresh won't re-trigger it.
+  // ponytail: client-triggered; closing the tab before this mounts leaves a
+  // Draft. Move it into a server workflow if that ever happens in practice.
   const autoBuildFired = useRef(false)
   useEffect(() => {
     if (autoBuildFired.current) return
@@ -408,14 +412,14 @@ export function AgentEditor({
     // effect body (cascading-render lint rule).
     setTimeout(() => {
       setDeploying(true)
-      deployAgent(agent.id)
+      deployAndPromoteAgent(agent.id)
         .then(() => {
           router.refresh()
           loadDeployments()
         })
         .catch(() => {
           setDeployFailed(true)
-          toast.error("Build failed")
+          toast.error("Deploy failed")
           router.refresh()
         })
         .finally(() => setDeploying(false))

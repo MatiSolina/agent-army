@@ -16,6 +16,7 @@ import { Button } from "@/components/ui/button"
 import { getModelLabel } from "@/lib/models"
 import { createAgent, createAgentFromTemplate } from "@/app/actions/agents"
 import { AGENT_TEMPLATES, type AgentTemplate } from "@/lib/templates"
+import { newAgentPath } from "@/lib/eve/action-bar-state"
 
 // mode  → pick template vs start from scratch
 // pick  → choose which template (list)
@@ -49,19 +50,15 @@ export function AgentFormDialog({
     onOpenChange(next)
   }
 
-  // Land the user in the editor with whatever was just created. `build` adds a
-  // ?building=1 flag the editor consumes once to kick off a preview build;
-  // template agents deploy with zero extra config, so we build immediately.
-  const create = async (
-    run: () => Promise<string>,
-    opts?: { build?: boolean },
-  ) => {
+  // Land the user in the editor with whatever was just created; the editor
+  // consumes the auto-deploy flag once and ships it to production.
+  const create = async (run: () => Promise<string>) => {
     setLoading(true)
     try {
       const slug = await run()
-      toast.success(opts?.build ? "Agent created — building preview" : "Agent created")
+      toast.success("Agent created — deploying")
       onOpenChange(false)
-      router.push(`/agents/${slug}${opts?.build ? "?building=1" : ""}`)
+      router.push(newAgentPath(slug))
     } catch {
       toast.error("Could not create the agent")
     } finally {
@@ -173,11 +170,7 @@ export function AgentFormDialog({
               <Button
                 type="button"
                 disabled={loading}
-                onClick={() =>
-                  create(() => createAgentFromTemplate(template.id), {
-                    build: true,
-                  })
-                }
+                onClick={() => create(() => createAgentFromTemplate(template.id))}
               >
                 {loading ? "Creating…" : "Use this template"}
               </Button>
